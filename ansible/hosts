@@ -1,0 +1,6 @@
+[proxmox_host]
+euclid
+pythagoras
+
+[proxmox_vms]
+red.local
