@@ -1,0 +1,14 @@
+---
+- hosts: proxmox_host
+  tasks:
+    - name: Remove enterprise repo
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/pve-enterprise.list
+        state: absent
+    - name: Configure community repo
+      ansible.builtin.apt_repository:
+        repo: deb http://download.proxmox.com/debian/pve buster pve-no-subscription
+        state: present
+    - name: Run "apt update"
+      apt:
+        update_cache: yes
