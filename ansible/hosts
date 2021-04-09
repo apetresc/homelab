@@ -4,3 +4,7 @@ pythagoras
 
 [proxmox_vms]
 red.local
+
+[baremetal]
+euclid
+pythagoras
