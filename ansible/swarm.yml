@@ -1,0 +1,16 @@
+---
+- hosts: swarm_manager
+  tasks:
+    - name: Check if Swarm has already been Initialized
+      shell: docker node ls
+      register: swarm_status
+      ignore_errors: true
+      tags: swarm
+
+- hosts: red.local
+  tasks:
+    - name: Set the ingress label
+      docker_node:
+        hostname: red
+        labels:
+          ingress: "true"

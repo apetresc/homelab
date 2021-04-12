@@ -3,10 +3,17 @@ euclid
 pythagoras
 archimedes
 
-[proxmox_vms]
+[proxmox_vm]
 red.local
 
 [baremetal]
 euclid
 pythagoras
 archimedes
+
+[vm]
+red.local
+
+
+[swarm_manager]
+red.local
