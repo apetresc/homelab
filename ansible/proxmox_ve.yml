@@ -16,9 +16,8 @@
       apt:
         pkg:
         - sudo
-        - bsdtar
+        - htop
         - zip
-        - python-cryptography
 
     - name: Fetch LXC templates
       ansible.builtin.shell: pveam update

@@ -1,32 +1,7 @@
 ---
 - hosts: baremetal
-  pre_tasks:
-  - name: Create node_exporter cert dir
-    file:
-      path: "/etc/node_exporter"
-      state: directory
-      owner: root
-      group: root
-  - name: Create private key
-    openssl_privatekey:
-      path: /etc/node_exporter/tls.key
-  - name: Create CSR
-    openssl_csr:
-      path: /etc/node_exporter/tls.csr
-      privatekey_path: /etc/node_exporter/tls.key
-  - name: Create cert and key
-    openssl_certificate:
-      path: /etc/node_exporter/tls.cert
-      csr_path: /etc/node_exporter/tls.csr
-      privatekey_path: /etc/node_exporter/tls.key
-      provider: selfsigned
 
   roles:
     - role: cloudalchemy.node_exporter
       become: no
-
-  vars:
-    node_exporter_tls_server_config:
-      cert_file: /etc/node_exporter/tls.cert
-      key_file: /etc/node_exporter/tls.key
 
