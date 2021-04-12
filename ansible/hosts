@@ -1,6 +1,7 @@
 [proxmox_host]
 euclid
 pythagoras
+archimedes
 
 [proxmox_vms]
 red.local
@@ -8,3 +9,4 @@ red.local
 [baremetal]
 euclid
 pythagoras
+archimedes
