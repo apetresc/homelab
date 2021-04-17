@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  grafana:
+    image: grafana/grafana:7.5.3
+    networks:
+      - observe
+      - proxy
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.grafana.rule: "Host(`grafana.apetre.sc`)"
+        traefik.http.routers.grafana.tls.certResolver: "r53resolver"
+        traefik.http.routers.grafana.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.grafana.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.grafana.loadbalancer.server.port: 3000
+        traefik.docker.network: proxy
+    environment:
+      - TZ=America/Toronto
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel
+    configs:
+      - source: grafana_provision_dashboards
+        target: /etc/grafana/provisioning/dashboards/provider.yaml
+      - source: grafana_provision_datasource_prometheus
+        target: /etc/grafana/provisioning/datasources/prometheus.yaml
+      - source: grafana_dashboard_node_exporter
+        target: /var/lib/grafana/dashboards/node_exporter.json
+    volumes:
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+    depends_on:
+      - prometheus
+
+
+  prometheus:
+    image: prom/prometheus:v2.26.0
+    networks:
+      - observe
+    extra_hosts:
+      - "euclid:192.168.1.128"
+      - "pythagoras:192.168.1.129"
+      - "archimedes:192.168.1.130"
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    volumes:
+      - type: volume
+        source: prometheus_data
+        target: /var/lib/prometheus
+
+configs:
+  prometheus_config:
+    file: ./config/prometheus/prometheus.yml
+  grafana_provision_dashboards:
+    file: ./config/grafana/provisioning/dashboards/provider.yaml
+  grafana_provision_datasource_prometheus:
+    file: ./config/grafana/provisioning/datasources/prometheus.yaml
+  grafana_dashboard_node_exporter:
+    file: ./config/grafana/dashboards/node_exporter.json
+
+volumes:
+  prometheus_data:
+    driver: zfs
+  grafana_data:
+    driver: zfs
+
+networks:
+  observe:
+    external: true
+  proxy:
+    external: true
+
