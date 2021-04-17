@@ -1,0 +1,72 @@
+---
+- hosts: archimedes
+  roles:
+    - role: stefangweichinger.ansible_rclone
+    - role: geerlingguy.nfs
+
+- hosts: archimedes
+  tasks:
+    - name: Copy rclone config
+      ansible.builtin.copy:
+        src: ./secrets/rclone.conf
+        dest: /root/.config/rclone/rclone.conf
+        owner: root
+        group: root
+        mode: '0600'
+    - name: Allow non-root users to mount root-readable FUSE filesystems
+      community.general.ini_file:
+        path: /etc/fuse.conf
+        section: null
+        allow_no_value: true
+        option: user_allow_other
+        state: present
+    - name: Create systemd mount unit for freezer
+      ansible.builtin.copy:
+        src: ./configs/systemd/rclone-freezer.service
+        dest: /etc/systemd/system/rclone-freezer.service
+        owner: root
+        group: root
+    - name: Create systemd mount unit for freezer-crypt
+      ansible.builtin.copy:
+        src: ./configs/systemd/rclone-freezer-crypt.service
+        dest: /etc/systemd/system/rclone-freezer-crypt.service
+        owner: root
+        group: root
+    - name: Create mount point for freezer
+      ansible.builtin.file:
+        path: /mnt/rclone/freezer
+        state: directory
+    - name: Start and enable mount service for freezer
+      ansible.builtin.systemd:
+        name: rclone-freezer
+        daemon_reload: yes
+        state: started
+        enabled: yes
+    - name: Create mount point for freezer-crypt
+      ansible.builtin.file:
+        path: /mnt/rclone/freezer-crypt
+        state: directory
+    - name: Start and enable mount service for freezer-crypt
+      ansible.builtin.systemd:
+        name: rclone-freezer-crypt
+        daemon_reload: yes
+        state: started
+        enabled: yes
+    - name: Create NFS root
+      ansible.builtin.file:
+        path: /srv/nfs
+        state: directory
+    - name: Bind mount freezer shares
+      ansible.posix.mount:
+        path: /srv/nfs/freezer
+        src: /mnt/rclone/freezer
+        opts: bind
+        state: mounted
+        fstype: none
+    - name: Bind mount freezer-crypt shares
+      ansible.posix.mount:
+        path: /srv/nfs/freezer-crypt
+        src: /mnt/rclone/freezer-crypt
+        opts: bind
+        state: mounted
+        fstype: none

@@ -1,0 +1,23 @@
+[Unit]
+Description=rclone mount of freezer
+AssertPathIsDirectory=/mnt/rclone/freezer
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+ExecStart=rclone mount \
+    --cache-dir /tmp/rclone/cache \
+    --vfs-cache-mode full \
+    --vfs-cache-max-size 10G \
+    --attr-timeout 15m \
+    --fast-list \
+    --exclude crypt/ \
+    --allow-other \
+    freezer: /mnt/rclone/freezer
+Restart=always
+RestartSec=10
+ExecStop=/bin/fusermount -u /mnt/rclone/freezer
+
+[Install]
+WantedBy=multi-user.target
