@@ -5,3 +5,8 @@
     - role: cloudalchemy.node_exporter
       become: no
 
+- hosts: vm
+
+  roles:
+    - role: cloudalchemy.node_exporter
+      become: yes
