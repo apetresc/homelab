@@ -58,14 +58,14 @@
         state: directory
     - name: Bind mount freezer shares
       ansible.posix.mount:
-        path: /srv/nfs/freezer
+        path: /srv/nfs/rclone/freezer
         src: /mnt/rclone/freezer
         opts: bind
         state: mounted
         fstype: none
     - name: Bind mount freezer-crypt shares
       ansible.posix.mount:
-        path: /srv/nfs/freezer-crypt
+        path: /srv/nfs/rclone/freezer-crypt
         src: /mnt/rclone/freezer-crypt
         opts: bind
         state: mounted
