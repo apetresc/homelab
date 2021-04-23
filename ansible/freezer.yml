@@ -1,0 +1,45 @@
+---
+- hosts: archimedes
+  pre_tasks:
+    - name: Create NFS root
+      ansible.builtin.file:
+        path: /srv/nfs
+        state: directory
+    - name: Bind mount freezer
+      ansible.posix.mount:
+        path: /srv/nfs/freezer
+        src: /data/freezer
+        opts: bind
+        state: mounted
+        fstype: none
+  roles:
+    - role: geerlingguy.nfs
+
+- hosts: smb
+  pre_tasks:
+    - name: Create SMB root
+      ansible.builtin.file:
+        path: /srv/smb
+        state: directory
+    - name: Bind mount freezer
+      ansible.posix.mount:
+        path: /srv/smb/freezer
+        src: /data/freezer
+        opts: bind
+        state: mounted
+        fstype: none
+  vars:
+    samba_users:
+      - name: apetresc
+        password: "{{ apetresc_password }}"
+      - name: jelee
+        password: "{{ jelee_password }}"
+    samba_shares_root: /srv/smb
+    samba_shares:
+      - name: freezer
+        public: no
+        valid_users: apetresc,jelee
+        group: apetresc
+  roles:
+    - role: bertvv.samba
+    - role: wsdd
