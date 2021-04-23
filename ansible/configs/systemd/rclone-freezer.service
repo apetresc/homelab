@@ -9,7 +9,7 @@ Type=notify
 ExecStart=rclone mount \
     --cache-dir /tmp/rclone/cache \
     --vfs-cache-mode full \
-    --vfs-cache-max-size 100G \
+    --vfs-cache-max-size 10G \
     --attr-timeout 15m \
     --fast-list \
     --exclude crypt/ \
