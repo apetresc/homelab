@@ -1,0 +1,113 @@
+version: "3.7"
+
+services:
+  jackett:
+    image: linuxserver/jackett:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.jackett.rule: "Host(`jackett.apetre.sc`)"
+        traefik.http.routers.jackett.tls.certResolver: "r53resolver"
+        traefik.http.routers.jackett.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.jackett.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.jackett.loadbalancer.server.port: 9117
+        traefik.http.routers.jackett.middlewares: "authelia@docker"
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: jackett_config
+        target: /config
+
+    
+  lidarr:
+    image: linuxserver/lidarr:version-0.8.1.2135
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.lidarr.rule: "Host(`lidarr.apetre.sc`)"
+        traefik.http.routers.lidarr.tls.certResolver: "r53resolver"
+        traefik.http.routers.lidarr.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.lidarr.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.lidarr.loadbalancer.server.port: 8686
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: lidarr_config
+        target: /config
+      - type: volume
+        source: music
+        target: /music
+        read_only: false
+
+  calibre-web:
+    image: linuxserver/calibre-web:latest
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/Toronto
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.calibre.rule: "Host(`calibre.apetre.sc`)"
+        traefik.http.routers.calibre.tls.certResolver: "r53resolver"
+        traefik.http.routers.calibre.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.calibre.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.calibre.loadbalancer.server.port: 8083
+        traefik.http.routers.calibre.middlewares: "authelia@docker"
+        traefik.docker.network: proxy
+    networks:
+      - proxy
+    volumes:
+      - type: volume
+        source: calibre_config
+        target: /config
+      - type: volume
+        source: books
+        target: /books
+    secrets:
+      - source: calibre_web_oauth_secret
+        target: /config/client_secrets.json
+
+volumes:
+  lidarr_config:
+    driver: zfs
+  jackett_config:
+    driver: zfs
+  calibre_config:
+    driver: zfs
+  music:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Music"
+  books:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Calibre"
+
+networks:
+  default:
+  proxy:
+    external: true
+
+secrets:
+  calibre_web_oauth_secret:
+    external: true
