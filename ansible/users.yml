@@ -1,0 +1,20 @@
+---
+- hosts: archimedes
+  tasks:
+    - name: Add the user 'apetresc'
+      ansible.builtin.user:
+        name: apetresc
+        comment: Adrian Petrescu
+        uid: 1000
+        groups: sudo
+        state: present
+    - name: Get apetresc's public SSH key from Github
+      ansible.posix.authorized_key:
+        user: apetresc
+        state: present
+        key: https://github.com/apetresc.keys
+    - name: Add the user 'jelee'
+      ansible.builtin.user:
+        name: jelee
+        comment: Jennifer Lee
+        uid: 1001

@@ -18,6 +18,7 @@
         - sudo
         - htop
         - zip
+        - git
 
     - name: Fetch LXC templates
       ansible.builtin.shell: pveam update

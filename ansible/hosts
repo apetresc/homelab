@@ -17,3 +17,6 @@ red.local
 
 [swarm_manager]
 red.local
+
+[smb]
+archimedes

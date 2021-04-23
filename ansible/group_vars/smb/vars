@@ -1,0 +1,3 @@
+---
+apetresc_password: "{{ vault_apetresc_password }}"
+jelee_password: "{{ vault_jelee_password }}"
