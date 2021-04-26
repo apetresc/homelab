@@ -1,0 +1,3 @@
+[submodule "containers/calibredb"]
+	path = containers/calibredb
+	url = git@github.com:apetresc/docker-calibredb
