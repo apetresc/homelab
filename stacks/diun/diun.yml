@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  diun:
+    image: crazymax/diun:latest
+    volumes:
+      - "data:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "TZ=America/Toronto"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+      - "DIUN_WATCH_WORKERS=20"
+      - "DIUN_WATCH_SCHEDULE=0 */6 * * *"
+      - "DIUN_PROVIDERS_SWARM=true"
+      - "DIUN_PROVIDERS_SWARM_WATCHBYDEFAULT=true"
+      - "DIUN_NOTIF_MATRIX_HOMESERVERURL=https://matrix.apetre.sc"
+      - "DIUN_NOTIF_MATRIX_USER=@diun:apetre.sc"
+      - "DIUN_NOTIF_MATRIX_PASSWORDFILE=/var/run/secrets/diun_matrix_password"
+      - "DIUN_NOTIF_MATRIX_ROOMID=!SuOsLivlTUORQpUtcH:beeperhq.com"
+      - "DIUN_NOTIF_MATRIX_MSGTYPE=text"
+    secrets:
+      - diun_matrix_password
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  data:
+    driver: zfs
+
+secrets:
+  diun_matrix_password:
+    external: true
