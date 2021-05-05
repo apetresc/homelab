@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  bitwarden:
+    image: vaultwarden/server:1.21.0
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.bitwarden.rule: "Host(`bitwarden.apetre.sc`)"
+        traefik.http.routers.bitwarden.tls.certResolver: "r53resolver"
+        traefik.http.routers.bitwarden.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.bitwarden.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.bitwarden.loadbalancer.server.port: 80
+        traefik.docker.network: proxy
+    volumes:
+      - type: volume
+        source: data
+        target: /data
+    networks:
+      - proxy
+    healthcheck:
+      disable: false
+
+
+volumes:
+  data:
+    driver: zfs
+
+networks:
+  proxy:
+    external: true
