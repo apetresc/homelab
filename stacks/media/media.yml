@@ -25,7 +25,85 @@ services:
         source: jackett_config
         target: /config
 
-    
+  tautulli:
+    image: ghcr.io/linuxserver/tautulli:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.tautulli.rule: "Host(`tautulli.apetre.sc`)"
+        traefik.http.routers.tautulli.tls.certResolver: "r53resolver"
+        traefik.http.routers.tautulli.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.tautulli.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.tautulli.loadbalancer.server.port: 8181
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/Toronto
+    volumes:
+      - tautulli_config:/config
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.sonarr.rule: "Host(`sonarr.apetre.sc`)"
+        traefik.http.routers.sonarr.tls.certResolver: "r53resolver"
+        traefik.http.routers.sonarr.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.sonarr.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.sonarr.loadbalancer.server.port: 8989
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: sonarr_config
+        target: /config
+      - type: volume
+        source: shows
+        target: /shows
+      - type: volume
+        source: unsorted
+        target: /downloads
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.radarr.rule: "Host(`radarr.apetre.sc`)"
+        traefik.http.routers.radarr.tls.certResolver: "r53resolver"
+        traefik.http.routers.radarr.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.radarr.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.radarr.loadbalancer.server.port: 7878
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: radarr_config
+        target: /config
+      - type: volume
+        source: movies
+        target: /movies
+      - type: volume
+        source: unsorted
+        target: /downloads
+
   lidarr:
     image: linuxserver/lidarr:version-0.8.1.2135
     deploy:
@@ -54,7 +132,7 @@ services:
         read_only: false
 
   calibre-web:
-    image: linuxserver/calibre-web:latest
+    image: apetre.sc/calibre-web:latest
     environment:
       - PUID=1000
       - GUID=1000
@@ -79,16 +157,87 @@ services:
       - type: volume
         source: books
         target: /books
+      - type: volume
+        source: unsorted
+        target: /unsorted
     secrets:
       - source: calibre_web_oauth_secret
         target: /config/client_secrets.json
 
+  airdcpp:
+    image: gangefors/airdcpp-webclient
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.airdcpp.rule: "Host(`airdcpp.apetre.sc`)"
+        traefik.http.routers.airdcpp.tls.certResolver: "r53resolver"
+        traefik.http.routers.airdcpp.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.airdcpp.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.airdcpp.loadbalancer.server.port: 5600
+        traefik.docker.network: proxy
+    networks:
+      - proxy
+    user: 1000:1000
+    hostname: airdcpp
+    environment:
+      - TZ=America/Toronto
+    ports:
+      - target: 21248
+        published: 21248
+        protocol: tcp
+        mode: host
+      - target: 21248
+        published: 21248
+        protocol: udp
+        mode: host
+      - target: 21249
+        published: 21249
+        protocol: tcp
+        mode: host
+      - target: 21249
+        published: 21249
+        protocol: udp
+        mode: host
+    volumes:
+      - type: volume
+        source: airdcpp_data
+        target: /.airdcpp
+      - type: volume
+        source: unsorted
+        target: /Downloads
+      - type: volume
+        source: music
+        target: /data/Music
+      - type: volume
+        source: shows
+        target: /data/Shows
+      - type: volume
+        source: books
+        target: /data/Books
+      - type: volume
+        source: comics
+        target: /data/Comics
+      - type: volume
+        source: movies
+        target: /data/Movies
+      - type: volume
+        source: anime
+        target: /data/Anime
+
 volumes:
+  tautulli_config:
+    driver: zfs
   lidarr_config:
+    driver: zfs
+  radarr_config:
+    driver: zfs
+  sonarr_config:
     driver: zfs
   jackett_config:
     driver: zfs
   calibre_config:
+    driver: zfs
+  airdcpp_data:
     driver: zfs
   music:
     driver: local
@@ -96,12 +245,42 @@ volumes:
       type: nfs
       o: addr=192.168.1.130
       device: ":/srv/nfs/freezer/Music"
+  movies:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Movies"
+  shows:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Shows"
+  anime:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Anime"
   books:
     driver: local
     driver_opts:
       type: nfs
       o: addr=192.168.1.130
       device: ":/srv/nfs/freezer/Calibre"
+  comics:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Comics"
+  unsorted:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/unsorted"
 
 networks:
   default:

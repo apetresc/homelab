@@ -1,3 +1,6 @@
 [submodule "containers/calibredb"]
 	path = containers/calibredb
 	url = git@github.com:apetresc/docker-calibredb
+[submodule "containers/of"]
+	path = containers/of
+	url = git@github.com:DIGITALCRIMINAL/OnlyFans
