@@ -1,0 +1,110 @@
+api:
+  insecure: true
+
+entryPoints:
+  https:
+    address: ":443"
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+  traefik:
+    address: ":8081"
+  metrics:
+    address: ":8082"
+
+providers:
+  docker:
+    swarmMode: true
+    exposedByDefault: false
+    network: proxy
+  file:
+    filename: /etc/traefik/extra_services.yaml
+    watch: true
+
+tls:
+  options:
+    default:
+      minVersion: "VersionTLS12"
+      curvePreferences:
+        - curveP521
+        - curveP384
+        - curveP256
+      preferServerCipherSuites: true
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+        - TLS_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_RSA_WITH_AES_256_CBC_SHA
+
+certificatesResolvers:
+  r53resolver:
+    # Enable ACME (Let's Encrypt): automatic SSL.
+    acme:
+      email: "adrian@apetre.sc"
+      storage: "/etc/traefik/certs/acme.json"
+
+      # CA server to use.
+      # Uncomment the line to use Let's Encrypt's staging server,
+      # leave commented to go to prod.
+      #
+      # Optional
+      # Default: "https://acme-v02.api.letsencrypt.org/directory"
+      #
+      # caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+      # KeyType to use.
+      #
+      # Optional
+      # Default: "RSA4096"
+      #
+      # Available values : "EC256", "EC384", "RSA2048", "RSA4096", "RSA8192"
+      #
+      # keyType: RSA4096
+
+      # Use a DNS-01 ACME challenge rather than HTTP-01 challenge.
+      # Note: mandatory for wildcard certificate generation.
+      #
+      # Optional
+      #
+      dnsChallenge:
+        provider: route53
+
+        # By default, the provider will verify the TXT DNS challenge record before letting ACME verify.
+        # If delayBeforeCheck is greater than zero, this check is delayed for the configured duration in seconds.
+        # Useful if internal networks block external DNS queries.
+        #
+        # Optional
+        # Default: 0
+        #
+        # delayBeforeCheck: 0
+
+        # Use following DNS servers to resolve the FQDN authority.
+        #
+        # Optional
+        # Default: empty
+        #
+        # resolvers
+        # - "1.1.1.1:53"
+        # - "8.8.8.8:53"
+
+        # Disable the DNS propagation checks before notifying ACME that the DNS challenge is ready.
+        #
+        # NOT RECOMMENDED:
+        # Increase the risk of reaching Let's Encrypt's rate limits.
+        #
+        # Optional
+        # Default: false
+        #
+        # disablePropagationCheck: true
+
+metrics:
+  prometheus:
+    entryPoint: metrics

@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  reverse_proxy:
+    image: traefik:v2.4.9
+    networks:
+      - proxy
+      - observe
+    secrets:
+      - route53_aws_credentials
+    environment:
+      - AWS_SHARED_CREDENTIALS_FILE=/run/secrets/route53_aws_credentials
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: host
+    configs:
+      - source: traefik_20210622
+        target: /etc/traefik/traefik.yaml
+      - source: extra_services_20210622
+        target: /etc/traefik/extra_services.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - certs:/etc/traefik/certs
+
+networks:
+  proxy:
+    external: true
+  observe:
+    external: true
+
+volumes:
+  certs:
+    driver: zfs
+
+configs:
+  traefik_20210622:
+    file: ./config/traefik.yaml
+  extra_services_20210622:
+    file: ./config/extra_services.yaml
+
+secrets:
+  route53_aws_credentials:
+    external: true

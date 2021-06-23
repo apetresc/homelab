@@ -1,0 +1,31 @@
+http:
+  services:
+    apetresc:
+      loadBalancer:
+        servers:
+          - url: "https://apetre.sc/"
+    homeassistant:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.10:8123"
+
+
+  routers:
+    apetresc:
+      rule: "Host(`apetre.sc`)"
+      service: apetresc
+      tls:
+        certResolver: r53resolver
+        domains:
+          - main: apetre.sc
+            sans:
+              - "*.apetre.sc"
+    apetresc:
+      rule: "Host(`ha.apetre.sc`)"
+      service: homeassistant
+      tls:
+        certResolver: r53resolver
+        domains:
+          - main: apetre.sc
+            sans:
+              - "*.apetre.sc"
