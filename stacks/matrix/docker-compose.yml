@@ -1,0 +1,119 @@
+version: '3.7'
+
+services:
+  synapse:
+    image: docker.io/matrixdotorg/synapse:v1.36.0
+    # See the readme for a full documentation of the environment settings
+    user: "1000:1000"
+    environment:
+      - SYNAPSE_CONFIG_DIR=/config
+      - SYNAPSE_CONFIG_PATH=/config
+      - UID=1000
+      - GID=1000
+      - TZ=America/Toronto
+
+    configs:
+      - source: homeserver_20210729
+        target: /config/homeserver.yaml
+      - source: logging_config_20210628
+        target: /config/apetre.sc.log.config
+      - source: shared_secret_authenticator
+        target: /usr/local/lib/python3.8/site-packages/shared_secret_authenticator.py
+    secrets:
+      - source: synapse_apetre.sc_signing_key
+        target: /config/apetre.sc.signing.key
+      - source: synapse_secrets
+        target: /config/secrets.yaml
+    volumes:
+      - data:/data
+    depends_on:
+      - db
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.http-synapse.entryPoints: "http"
+        traefik.http.routers.http-synapse.rule: "Host(`matrix.apetre.sc`)"
+        traefik.http.middlewares.https_redirect.redirectscheme.scheme: "https"
+        traefik.http.middlewares.https_redirect.redirectscheme.permanent: "true"
+        traefik.http.routers.http-synapse.middlewares: "https_redirect"
+        traefik.http.routers.https-synapse.entryPoints: "https"
+        traefik.http.routers.https-synapse.rule: "Host(`matrix.apetre.sc`)"
+        traefik.http.routers.https-synapse.service: "synapse"
+        traefik.http.routers.https-synapse.tls: "true"
+        traefik.http.services.synapse.loadbalancer.server.port: 8008
+        traefik.http.routers.https-synapse.tls.certResolver: "r53resolver"
+        traefik.http.routers.https-synapse.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.https-synapse.tls.domains[0].sans: "*.apetre.sc"
+        traefik.docker.network: proxy
+    healthcheck:
+      disable: true
+    networks:
+      - default
+      - proxy
+      - observe
+
+  db:
+    image: docker.io/postgres:12-alpine
+    secrets:
+      - synapse_postgres_password
+    environment:
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD_FILE=/var/run/secrets/synapse_postgres_password
+      - POSTGRES_DB=postgres
+      # ensure the database gets created correctly
+      # https://github.com/matrix-org/synapse/blob/master/docs/postgres.md#set-up-database
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    configs:
+      - source: postgres_initdb
+        target: /docker-entrypoint-initdb.d/init-synapse-db.sh
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - default
+
+  admin:
+    image: awesometechnologies/synapse-admin:latest
+    networks:
+      - default
+      - proxy
+    depends_on:
+      - synapse
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.synapse-admin.rule: "Host(`admin.matrix.apetre.sc`)"
+        traefik.http.services.synapse-admin.loadbalancer.server.port: 80
+        traefik.http.routers.synapse-admin.tls.certResolver: "r53resolver"
+        traefik.http.routers.synapse-admin.tls.domains[0].main: "admin.matrix.apetre.sc"
+        traefik.docker.network: proxy
+
+volumes:
+  data:
+    driver: zfs
+  db:
+    driver: zfs
+
+networks:
+  default:
+  proxy:
+    external: true
+  observe:
+    external: true
+
+configs:
+  shared_secret_authenticator:
+    file: ./plugins/shared_secret_authenticator.py
+  homeserver_20210729:
+    file: ./config/homeserver.yaml
+  logging_config_20210628:
+    file: ./config/apetre.sc.log.config
+  postgres_initdb:
+    file: ./docker-entrypoint-initdb.d/init-synapse-db.sh
+
+secrets:
+  synapse_apetre.sc_signing_key:
+    external: true
+  synapse_postgres_password:
+    external: true
+  synapse_secrets:
+    external: true
