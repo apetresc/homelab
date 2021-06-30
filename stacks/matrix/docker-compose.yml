@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   synapse:
-    image: docker.io/matrixdotorg/synapse:v1.36.0
+    image: docker.io/matrixdotorg/synapse:v1.37.1
     # See the readme for a full documentation of the environment settings
     user: "1000:1000"
     environment:
