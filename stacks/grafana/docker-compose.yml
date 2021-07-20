@@ -47,7 +47,7 @@ services:
     volumes:
       - type: volume
         source: prometheus_data
-        target: /var/lib/prometheus
+        target: /prometheus
 
 configs:
   prometheus_config:
