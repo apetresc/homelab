@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  agent:
+    image: portainer/agent
+    environment:
+      # REQUIRED: Should be equal to the service name prefixed by "tasks." when
+      # deployed inside an overlay network
+      AGENT_CLUSTER_ADDR: tasks.agent
+      # AGENT_PORT: 9001
+      # LOG_LEVEL: debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - agent_network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer-ce
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    volumes:
+      - portainer_data:/data
+    networks:
+      - agent_network
+      - proxy
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.ingress == true
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.portainer.rule: "HostRegexp(`portainer.apetre.sc`)"
+        traefik.http.routers.portainer.tls.certResolver: "r53resolver"
+        traefik.http.routers.portainer.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.portainer.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.portainer.loadbalancer.server.port: 9000
+        traefik.http.routers.portainer.service: portainer
+        traefik.docker.network: proxy
+
+networks:
+  agent_network:
+    driver: overlay
+    attachable: true
+  proxy:
+    external: true
+
+volumes:
+  portainer_data:
