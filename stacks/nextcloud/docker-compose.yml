@@ -1,0 +1,100 @@
+version: "3.7"
+
+services:
+  nextcloud:
+    image: linuxserver/nextcloud:version-22.0.0
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.nextcloud.rule: "Host(`cloud.apetre.sc`)"
+        traefik.http.services.nextcloud.loadbalancer.server.port: 80
+        traefik.http.routers.nextcloud.tls.certResolver: "r53resolver"
+        traefik.http.routers.nextcloud.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.nextcloud.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.middlewares.nc-rep.redirectregex.regex: "https://(.*)/.well-known/(card|cal)dav"
+        traefik.http.middlewares.nc-rep.redirectregex.replacement: "https://$$1/remote.php/dav/"
+        traefik.http.middlewares.nc-rep.redirectregex.permanent: "true"
+        traefik.http.middlewares.nc-header.headers.referrerPolicy: "no-referrer"
+        traefik.http.middlewares.nc-header.headers.stsSeconds: "31536000"
+        traefik.http.middlewares.nc-header.headers.forceSTSHeader: "true"
+        traefik.http.middlewares.nc-header.headers.stsPreload: "true"
+        traefik.http.middlewares.nc-header.headers.stsIncludeSubdomains: "true"
+        traefik.http.middlewares.nc-header.headers.browserXssFilter: "true"
+        traefik.http.middlewares.nc-header.headers.customRequestHeaders.X-Forwarded-Proto: "https"
+        traefik.http.routers.nextcloud.middlewares: "nc-rep,nc-header"
+        traefik.docker.network: proxy
+    environment:
+      - PUID=${APETRESC_UID}
+      - PGID=${APETRESC_GID}
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: config
+        target: /config
+      - type: volume
+        source: data
+        target: /data
+      #- type: bind
+        #source: "${FREEZER_ROOT}"
+        #target: /mnt/data
+        #read_only: true
+      - type: bind
+        source: /home/apetresc
+        target: /mnt/apetresc
+    networks:
+      - default
+      - proxy
+
+  db:
+    image: postgres:12-alpine
+    secrets:
+      - nextcloud_postgres_password
+    environment:
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD_FILE=/var/run/secrets/nextcloud_postgres_password
+      - POSTGRES_DB=nextcloud
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - default
+
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.onlyoffice.rule: "Host(`office.apetre.sc`)"
+        traefik.http.services.onlyoffice.loadbalancer.server.port: 80
+        traefik.http.routers.onlyoffice.tls.certResolver: "r53resolver"
+        traefik.http.routers.onlyoffice.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.onlyoffice.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.middlewares.https-office-redirect.redirectscheme.scheme: "https"
+        traefik.http.routers.onlyoffice.middlewares: "oo-header"
+        traefik.http.middlewares.oo-header.headers.referrerPolicy: "no-referrer"
+        traefik.http.middlewares.oo-header.headers.stsSeconds: "31536000"
+        traefik.http.middlewares.oo-header.headers.forceSTSHeader: "true"
+        traefik.http.middlewares.oo-header.headers.stsPreload: "true"
+        traefik.http.middlewares.oo-header.headers.stsIncludeSubdomains: "true"
+        traefik.http.middlewares.oo-header.headers.browserXssFilter: "true"
+        traefik.http.middlewares.oo-header.headers.customRequestHeaders.X-Forwarded-Proto: "https"
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+
+volumes:
+  config:
+    driver: zfs
+  data:
+    driver: zfs
+  db:
+    driver: zfs
+
+networks:
+  default:
+  proxy:
+    external: true
+
+secrets:
+  nextcloud_postgres_password:
+    external: true
