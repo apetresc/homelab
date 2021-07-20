@@ -26,7 +26,7 @@ services:
     healthcheck:
       disable: true
     configs:
-      - source: config
+      - source: config_20210622
         target: /config/configuration.yml
       - source: users_database
         target: /config/users_database.yml
@@ -92,7 +92,7 @@ volumes:
     driver: zfs
 
 configs:
-  config:
+  config_20210622:
     file: ./config/configuration.yml
   users_database:
     file: ./config/users_database.yml

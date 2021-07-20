@@ -30,6 +30,10 @@ access_control:
       policy: two_factor
     - domain: jackett.apetre.sc
       policy: two_factor
+    - domain: calibre.apetre.sc
+      policy: bypass
+    - domain: homebridge.apetre.sc
+      policy: two_factor
 
 session:
   name: authelia_session
