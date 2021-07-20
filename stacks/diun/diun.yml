@@ -17,7 +17,7 @@ services:
       - "DIUN_NOTIF_MATRIX_HOMESERVERURL=https://matrix.apetre.sc"
       - "DIUN_NOTIF_MATRIX_USER=@diun:apetre.sc"
       - "DIUN_NOTIF_MATRIX_PASSWORDFILE=/var/run/secrets/diun_matrix_password"
-      - "DIUN_NOTIF_MATRIX_ROOMID=!SuOsLivlTUORQpUtcH:beeperhq.com"
+      - "DIUN_NOTIF_MATRIX_ROOMID=#homelab-alerts:apetre.sc"
       - "DIUN_NOTIF_MATRIX_MSGTYPE=text"
     secrets:
       - diun_matrix_password
