@@ -1,0 +1,28 @@
+#!/bin/bash -ex
+
+export CALIBRE_LIBRARY=/books
+export UNSORTED_ROOT=/unsorted/torrents/complete/books
+
+export FILENAME=$UNSORTED_ROOT/"$1"
+shift
+
+echo $FILENAME
+echo $@
+
+fetch-ebook-metadata "$@" -o > /tmp/metadata.opf
+cat /tmp/metadata.opf
+read -p "Continue? " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  read -p "Tags? " -r tags
+  output=$(calibredb --with-library=$CALIBRE_LIBRARY add -m overwrite "$FILENAME")
+  ids=$(echo $output | pcregrep -o1 "Added book ids: (\d+)$")
+  calibredb --with-library=$CALIBRE_LIBRARY set_metadata $ids /tmp/metadata.opf
+  calibredb --with-library=$CALIBRE_LIBRARY set_metadata -f rating:0 \
+                                                         -f \#physical:false \
+                                                         -f series:"" \
+                                                         -f series_index:0 \
+                                                         -f tags:"$tags" $ids
+  echo "Done adding ID: $ids"
+fi
