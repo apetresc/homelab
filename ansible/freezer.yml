@@ -21,6 +21,13 @@
         fstype: none
   roles:
     - role: geerlingguy.nfs
+  post_tasks:
+    - name: enable rpc-statd
+      ansible.builtin.systemd:
+        name: rpc-statd
+        daemon_reload: yes
+        state: started
+        enabled: yes
 
 - hosts: smb
   pre_tasks:
