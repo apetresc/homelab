@@ -40,6 +40,7 @@
         public: no
         valid_users: apetresc,jelee
         group: apetresc
+        write_list: apetresc,jelee
   roles:
     - role: bertvv.samba
     - role: wsdd
