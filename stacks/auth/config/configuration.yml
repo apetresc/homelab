@@ -26,7 +26,7 @@ authentication_backend:
     additional_users_dn: ou=users
     users_filter: (&({username_attribute}={input})(objectClass=person))
     additional_groups_dn: ou=groups
-    groups_filter: (&(member={dn})(objectclass=groupOfNames))
+    groups_filter: (&(member={dn})(objectClass=groupOfNames))
     group_name_attribute: cn
     mail_attribute: mail
     display_name_attribute: cn
@@ -43,8 +43,6 @@ access_control:
       policy: two_factor
     - domain: jackett.apetre.sc
       policy: two_factor
-    - domain: calibre.apetre.sc
-      policy: bypass
     - domain: homebridge.apetre.sc
       policy: two_factor
 

@@ -67,10 +67,8 @@ services:
     healthcheck:
       disable: true
     configs:
-      - source: config_20210724e
+      - source: config_20210724
         target: /config/configuration.yml
-      - source: users_database
-        target: /config/users_database.yml
     secrets:
       - authelia_jwt_secret
       - authelia_session_secret
@@ -141,10 +139,8 @@ volumes:
     driver: zfs
 
 configs:
-  config_20210724e:
+  config_20210724:
     file: ./config/configuration.yml
-  users_database:
-    file: ./config/users_database.yml
 
 secrets:
   ldap_admin_password:
