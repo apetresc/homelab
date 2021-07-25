@@ -146,7 +146,6 @@ services:
         traefik.http.routers.calibre.tls.domains[0].main: "apetre.sc"
         traefik.http.routers.calibre.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.calibre.loadbalancer.server.port: 8083
-        traefik.http.routers.calibre.middlewares: "authelia@docker"
         traefik.docker.network: proxy
     networks:
       - proxy
