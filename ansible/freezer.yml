@@ -51,6 +51,7 @@
         fstype: none
 
   vars:
+    samba_global_include: smb-conf-global-includes.conf
     samba_users:
       - name: apetresc
         password: "{{ apetresc_password }}"
