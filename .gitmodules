@@ -4,3 +4,6 @@
 [submodule "containers/of"]
 	path = containers/of
 	url = git@github.com:DIGITALCRIMINAL/OnlyFans
+[submodule "containers/shoginet"]
+	path = containers/shoginet
+	url = git@github.com:apetresc/shoginet.git
