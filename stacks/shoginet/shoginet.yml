@@ -1,0 +1,13 @@
+---
+version: "3.7"
+
+services:
+  fishnet:
+    image: apetre.sc/shoginet
+    configs:
+      - source: config_20210725
+        target: /shoginet/fishnet.ini
+
+configs:
+  config_20210725:
+    file: ./config/fishnet.ini
