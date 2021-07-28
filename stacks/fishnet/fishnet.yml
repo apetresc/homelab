@@ -1,0 +1,14 @@
+---
+version: "3.7"
+
+services:
+  fishnet:
+    image: niklasf/fishnet:master
+    environment:
+      - KEY_FILE=/run/secrets/fishnet_key
+    secrets:
+      - fishnet_key
+
+secrets:
+  fishnet_key:
+    external: true
