@@ -28,17 +28,27 @@ services:
         constraints:
           - node.role == manager
 
-  watchtower:
-    image: containrrr/watchtower
+  shepherd:
+    image: mazzolino/shepherd:latest
     environment:
-      - "WATCHTOWER_LABEL_ENABLE=true"
+      APPRISE_SIDECAR_URL: notify:5000
+      TZ: 'US/Eastern'
+      SLEEP_TIME: '5m'
+      FILTER_SERVICES: 'label=shepherd.enable=true'
+      VERBOSE: 'true'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       placement:
         constraints:
-          - node.role == manager
-    command: --interval 10800
+        - node.role == manager
+
+  notify:
+    image: apetre.sc/apprise-microservice:latest
+    environment:
+      NOTIFICATION_URLS_FILE: /run/secrets/apprise_homelab_alerts_connection_string
+    secrets:
+      - apprise_homelab_alerts_connection_string
 
   swarm-cronjob:
     image: crazymax/swarm-cronjob
@@ -59,4 +69,6 @@ volumes:
 
 secrets:
   diun_matrix_password:
+    external: true
+  apprise_homelab_alerts_connection_string:
     external: true

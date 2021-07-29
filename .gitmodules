@@ -7,3 +7,6 @@
 [submodule "containers/shoginet"]
 	path = containers/shoginet
 	url = git@github.com:apetresc/shoginet.git
+[submodule "containers/apprise-microservice"]
+	path = containers/apprise-microservice
+	url = git@github.com:apetresc/apprise-microservice.git

@@ -5,7 +5,7 @@ services:
     image: linuxserver/jackett:latest
     deploy:
       labels:
-        com.centurylinklabs.watchtower.enable: "true"
+        shepherd.enable: "true"
         traefik.enable: "true"
         traefik.http.routers.jackett.rule: "Host(`jackett.apetre.sc`)"
         traefik.http.routers.jackett.tls.certResolver: "r53resolver"
