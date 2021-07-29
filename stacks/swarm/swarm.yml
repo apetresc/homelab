@@ -4,7 +4,7 @@ services:
   diun:
     image: crazymax/diun:latest
     volumes:
-      - "data:/data"
+      - "diun_data:/data"
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - "TZ=America/Toronto"
@@ -28,8 +28,33 @@ services:
         constraints:
           - node.role == manager
 
+  watchtower:
+    image: containrrr/watchtower
+    environment:
+      - "WATCHTOWER_LABEL_ENABLE=true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    command: --interval 10800
+
+  swarm-cronjob:
+    image: crazymax/swarm-cronjob
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "TZ=America/Toronto"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
 volumes:
-  data:
+  diun_data:
     driver: zfs
 
 secrets:
