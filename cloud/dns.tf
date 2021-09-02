@@ -25,3 +25,12 @@ resource "aws_route53_record" "home_apetre_sc" {
   ttl = 60
 }
 
+resource "aws_route53_record" "paperless_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "paperless.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+

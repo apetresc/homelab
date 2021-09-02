@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  paperless:
+    image: ghcr.io/linuxserver/paperless-ng
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - PAPERLESS_CONSUMER_POLLING=30
+      - PAPERLESS_CONSUMER_RECURSIVE=true
+      - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.paperless.rule: "Host(`paperless.apetre.sc`)"
+        traefik.http.routers.paperless.tls.certResolver: "r53resolver"
+        traefik.http.routers.paperless.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.paperless.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.paperless.loadbalancer.server.port: 8000
+        traefik.docker.network: proxy
+    volumes:
+      - config:/config
+      - documents:/data
+    networks:
+      - default
+      - proxy
+
+volumes:
+  config:
+    driver: zfs
+  documents:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130
+      device: ":/srv/nfs/freezer/Documents/Paperless"
+
+networks:
+  default:
+  proxy:
+    external: true
