@@ -73,6 +73,9 @@ services:
         source: shows
         target: /shows
       - type: volume
+        source: anime
+        target: /anime
+      - type: volume
         source: unsorted
         target: /downloads
 
