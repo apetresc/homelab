@@ -1,0 +1,46 @@
+version: "3.7"
+
+services:
+  sftp:
+    image: atmoz/sftp
+    labels:
+        shepherd.enable: "true"
+    ports:
+      - "2221:22"
+    configs:
+      - source: sshd_config_20210908
+        target: /etc/ssh/sshd_config
+    secrets:
+      - source: sftp_users_20210908
+        target: /etc/sftp/users.conf
+    volumes:
+      - "ssh_keys:/etc/ssh"
+      - "freezer:/home/apetresc/freezer:ro"
+      - "freezer_goworldvideo:/home/shalexander/goworldvideo:ro"
+
+configs:
+  sshd_config_20210908:
+    file: ./config/sshd_config
+
+secrets:
+  sftp_users_20210908:
+    external: true
+
+
+volumes:
+  ssh_keys:
+    driver: zfs
+  freezer:
+    driver: rclone
+    driver_opts:
+      remote: 'gdrive:freezer'
+      allow_other: 'true'
+      vfs_cache_mode: 'full'
+      poll_interval: 0
+  freezer_goworldvideo:
+    driver: rclone
+    driver_opts:
+      remote: 'gdrive:freezer/YouTube/Go World Video'
+      allow_other: 'true'
+      vfs_cache_mode: 'full'
+      poll_interval: 0
