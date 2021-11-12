@@ -43,4 +43,5 @@ volumes:
       remote: 'gdrive:freezer/YouTube/Go World Video'
       allow_other: 'true'
       vfs_cache_mode: 'full'
+      vfs_cache_max_size: '30G'
       poll_interval: 0
