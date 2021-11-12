@@ -5,20 +5,20 @@
       ansible.builtin.file:
         path: /srv/nfs
         state: directory
-    - name: Bind mount freezer
-      ansible.posix.mount:
-        path: /srv/nfs/freezer
-        src: /data/freezer
-        opts: bind
-        state: mounted
-        fstype: none
     - name: Bind mount unorted
       ansible.posix.mount:
         path: /srv/nfs/unsorted
-        src: /data/unsorted
+        src: /tank1/unsorted
         opts: bind
         state: mounted
         fstype: none
+    - name: Bind mount tank1
+      ansible.posix.mount:
+        path: /srv/nfs/tank1
+        src: /tank1
+        opts: rbind
+        state: mounted
+        fstype: bind
   roles:
     - role: geerlingguy.nfs
   post_tasks:
@@ -35,17 +35,10 @@
       ansible.builtin.file:
         path: /srv/smb
         state: directory
-    - name: Bind mount freezer
+    - name: Bind mount tank1
       ansible.posix.mount:
-        path: /srv/smb/freezer
-        src: /data/freezer
-        opts: bind
-        state: mounted
-        fstype: none
-    - name: Bind mount unsorted
-      ansible.posix.mount:
-        path: /srv/smb/unsorted
-        src: /data/unsorted
+        path: /srv/smb/tank1
+        src: /tank1
         opts: bind
         state: mounted
         fstype: none
@@ -59,16 +52,11 @@
         password: "{{ jelee_password }}"
     samba_shares_root: /srv/smb
     samba_shares:
-      - name: freezer
+      - name: tank1
         public: no
         valid_users: apetresc,jelee
         group: apetresc
         write_list: apetresc,jelee
-      - name: unsorted
-        public: no
-        valid_users: apetresc
-        write_list: apetresc
-        group: apetresc
   roles:
     - role: bertvv.samba
     - role: wsdd
