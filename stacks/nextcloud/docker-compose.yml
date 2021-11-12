@@ -34,13 +34,12 @@ services:
       - type: volume
         source: data
         target: /data
-      #- type: bind
-        #source: "${FREEZER_ROOT}"
-        #target: /mnt/data
-        #read_only: true
       - type: bind
         source: /home/apetresc
         target: /mnt/apetresc
+      - type: volume
+        source: wlee_files
+        target: /data/wlee/files
     networks:
       - default
       - proxy
@@ -89,6 +88,12 @@ volumes:
     driver: zfs
   db:
     driver: zfs
+  wlee_files:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/unsorted/ftp/wlee"
 
 networks:
   default:

@@ -33,8 +33,8 @@ volumes:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Documents/Paperless"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/misc/Documents/Paperless"
 
 networks:
   default:

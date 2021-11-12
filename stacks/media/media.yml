@@ -246,44 +246,44 @@ volumes:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Music"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/audio/Music"
   movies:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Movies"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/video/Movies"
   shows:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Shows"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/video/Shows"
   anime:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Anime"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/video/Anime"
   books:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Calibre"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/text/Books"
   comics:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/freezer/Comics"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/text/Comics"
   unsorted:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=192.168.1.130
-      device: ":/srv/nfs/unsorted"
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/unsorted"
 
 networks:
   default:
