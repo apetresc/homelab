@@ -47,6 +47,27 @@ services:
     volumes:
       - tautulli_config:/config
 
+  ombi:
+    image: lscr.io/linuxserver/ombi
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.ombi.rule: "Host(`ombi.apetre.sc`)"
+        traefik.http.routers.ombi.tls.certResolver: "r53resolver"
+        traefik.http.routers.ombi.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.ombi.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.ombi.loadbalancer.server.port: 3579
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - ombi_config:/config
+
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
     deploy:
@@ -229,6 +250,8 @@ services:
 
 volumes:
   tautulli_config:
+    driver: zfs
+  ombi_config:
     driver: zfs
   lidarr_config:
     driver: zfs
