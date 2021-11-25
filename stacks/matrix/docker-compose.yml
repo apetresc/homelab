@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   synapse:
-    image: docker.io/matrixdotorg/synapse:v1.44.0
+    image: docker.io/matrixdotorg/synapse:v1.47.1
     # See the readme for a full documentation of the environment settings
-    user: "1000:1000"
+    # user: "1000:1000"
     environment:
       - SYNAPSE_CONFIG_DIR=/config
       - SYNAPSE_CONFIG_PATH=/config
