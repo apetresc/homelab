@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd "$1"
+
+for f in "$1"/*.rar
+do
+  [ -e "$f" ] && unrar x "$f"
+done
+
+# vim: set backupcopy=yes :

@@ -43,3 +43,12 @@ resource "aws_route53_record" "sftp_apetre_sc" {
   ttl = 300
 }
 
+resource "aws_route53_record" "qbittorrent_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "qbittorrent.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+

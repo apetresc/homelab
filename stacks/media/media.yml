@@ -248,6 +248,42 @@ services:
         source: anime
         target: /data/Anime
 
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.apetre.sc`)"
+        traefik.http.routers.qbittorrent.tls.certResolver: "r53resolver"
+        traefik.http.routers.qbittorrent.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.qbittorrent.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - WEBUI_PORT=8080
+    configs:
+      - source: qbittorrent_script_postprocess_torrent
+        target: /config/scripts/postprocess-torrent
+    volumes:
+      - qbittorrent_config:/config
+      - unsorted:/downloads
+    ports:
+      - target: 6881
+        published: 6881
+        protocol: tcp
+        mode: host
+      - target: 6881
+        published: 6881
+        protocol: udp
+        mode: host
+
+
 volumes:
   tautulli_config:
     driver: zfs
@@ -264,6 +300,8 @@ volumes:
   calibre_config:
     driver: zfs
   airdcpp_data:
+    driver: zfs
+  qbittorrent_config:
     driver: zfs
   music:
     driver: local
@@ -312,6 +350,10 @@ networks:
   default:
   proxy:
     external: true
+
+configs:
+  qbittorrent_script_postprocess_torrent:
+    file: ./scripts/postprocess-torrent
 
 secrets:
   calibre_web_oauth_secret:
