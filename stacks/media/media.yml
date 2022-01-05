@@ -273,6 +273,7 @@ services:
     volumes:
       - qbittorrent_config:/config
       - unsorted:/downloads
+      - datasets:/datasets
     ports:
       - target: 6881
         published: 6881
@@ -339,6 +340,12 @@ volumes:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
       device: ":/srv/nfs/tank1/media/text/Comics"
+  datasets:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/datasets"
   unsorted:
     driver: local
     driver_opts:
