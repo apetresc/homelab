@@ -20,7 +20,6 @@ then
   ids=$(echo $output | pcregrep -o1 "Added book ids: (\d+)$")
   calibredb --with-library=$CALIBRE_LIBRARY set_metadata $ids /tmp/metadata.opf
   calibredb --with-library=$CALIBRE_LIBRARY set_metadata -f rating:0 \
-                                                         -f \#physical:false \
                                                          -f series:"" \
                                                          -f series_index:0 \
                                                          -f tags:"$tags" $ids
