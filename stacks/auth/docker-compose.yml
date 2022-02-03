@@ -43,7 +43,7 @@ services:
       - proxy
 
   authelia:
-    image: authelia/authelia
+    image: authelia/authelia:4.29.4
     volumes:
       - config:/config
     networks:
@@ -67,7 +67,7 @@ services:
     healthcheck:
       disable: true
     configs:
-      - source: config_20210724
+      - source: config_20220122c
         target: /config/configuration.yml
     secrets:
       - authelia_jwt_secret
@@ -139,7 +139,7 @@ volumes:
     driver: zfs
 
 configs:
-  config_20210724:
+  config_20220122c:
     file: ./config/configuration.yml
 
 secrets:

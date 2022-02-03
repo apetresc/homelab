@@ -258,6 +258,7 @@ services:
         traefik.http.routers.qbittorrent.tls.domains[0].main: "apetre.sc"
         traefik.http.routers.qbittorrent.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
+        traefik.http.routers.qbittorrent.middlewares: "authelia@docker"
         traefik.docker.network: proxy
     networks:
       - default

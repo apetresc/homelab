@@ -37,6 +37,10 @@ access_control:
   default_policy: deny
   rules:
     # Rules applied to everyone
+    - domain: qbittorrent.apetre.sc
+      networks:
+        - 192.168.0.0/16
+      policy: bypass
     - domain: public.apetre.sc
       policy: bypass
     - domain: secure.apetre.sc
@@ -44,6 +48,8 @@ access_control:
     - domain: jackett.apetre.sc
       policy: two_factor
     - domain: homebridge.apetre.sc
+      policy: two_factor
+    - domain: qbittorrent.apetre.sc
       policy: two_factor
 
 session:
