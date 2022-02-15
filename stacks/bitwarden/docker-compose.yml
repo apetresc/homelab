@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   bitwarden:
-    image: vaultwarden/server:1.21.0
+    image: vaultwarden/server:1.24.0
     deploy:
       labels:
         traefik.enable: "true"
@@ -12,6 +12,20 @@ services:
         traefik.http.routers.bitwarden.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.bitwarden.loadbalancer.server.port: 80
         traefik.docker.network: proxy
+    secrets:
+      - apetresc_smtp_password
+      - bitwarden_admin_token
+    environment:
+      - DOMAIN=https://bitwarden.apetre.sc
+      - SIGNUPS_ALLOWED=false
+      - ADMIN_TOKEN_FILE=/run/secrets/bitwarden_admin_token
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_FROM=adrian@apetre.sc
+      - SMTP_PORT=587
+      - SMTP_SSL=true
+      - SMTP_EXPLICIT_TLS=false
+      - SMTP_USERNAME=adrian@apetre.sc
+      - SMTP_PASSWORD_FILE=/run/secrets/apetresc_smtp_password
     volumes:
       - type: volume
         source: data
@@ -28,4 +42,10 @@ volumes:
 
 networks:
   proxy:
+    external: true
+
+secrets:
+  apetresc_smtp_password:
+    external: true
+  bitwarden_admin_token:
     external: true
