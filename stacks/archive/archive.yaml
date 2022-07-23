@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   tubearchivist:
-    image: bbilly1/tubearchivist:latest
+    image: bbilly1/tubearchivist:v0.1.6
     deploy:
       labels:
         traefik.enable: "true"
@@ -19,6 +19,8 @@ services:
       - media:/youtube
       - cache:/cache
     environment:
+      - TA_USERNAME=apetresc
+      - TA_PASSWORD=
       - ES_URL=http://archivist-es:9200
       - REDIS_HOST=archivist-redis
       - HOST_UID=1000
