@@ -14,6 +14,9 @@ services:
         traefik.http.services.jackett.loadbalancer.server.port: 9117
         traefik.http.routers.jackett.middlewares: "authelia@docker"
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -37,6 +40,9 @@ services:
         traefik.http.routers.tautulli.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.tautulli.loadbalancer.server.port: 8181
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -48,7 +54,7 @@ services:
       - tautulli_config:/config
 
   ombi:
-    image: lscr.io/linuxserver/ombi
+    image: lscr.io/linuxserver/ombi:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -58,6 +64,9 @@ services:
         traefik.http.routers.ombi.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.ombi.loadbalancer.server.port: 3579
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -79,6 +88,9 @@ services:
         traefik.http.routers.sonarr.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.sonarr.loadbalancer.server.port: 8989
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -111,6 +123,9 @@ services:
         traefik.http.routers.radarr.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.radarr.loadbalancer.server.port: 7878
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -140,6 +155,9 @@ services:
         traefik.http.routers.lidarr.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.lidarr.loadbalancer.server.port: 8686
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -167,6 +185,9 @@ services:
         traefik.http.routers.whisparr.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.whisparr.loadbalancer.server.port: 6969
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -197,6 +218,9 @@ services:
         traefik.http.routers.bazarr.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.bazarr.loadbalancer.server.port: 6767
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -234,6 +258,9 @@ services:
         traefik.http.routers.calibre.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.calibre.loadbalancer.server.port: 8083
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - proxy
     volumes:
@@ -261,6 +288,9 @@ services:
         traefik.http.routers.mylar.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.mylar.loadbalancer.server.port: 8090
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
@@ -283,7 +313,7 @@ services:
         target: /import
 
   airdcpp:
-    image: gangefors/airdcpp-webclient
+    image: gangefors/airdcpp-webclient:2.11.2-3
     deploy:
       labels:
         traefik.enable: "true"
@@ -293,6 +323,9 @@ services:
         traefik.http.routers.airdcpp.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.airdcpp.loadbalancer.server.port: 5600
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - proxy
     user: 1000:1000
@@ -354,6 +387,9 @@ services:
         traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
         traefik.http.routers.qbittorrent.middlewares: "authelia@docker"
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     networks:
       - default
       - proxy
