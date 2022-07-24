@@ -4,7 +4,10 @@ version: '3.7'
 services:
   openldap:
     image: osixia/openldap:1.5.0
-    hostname: openldap
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     environment:
       - TZ=America/Toronto
       - LDAP_ORGANISATION=apetre.sc
@@ -43,7 +46,7 @@ services:
       - proxy
 
   authelia:
-    image: authelia/authelia:4.29.4
+    image: authelia/authelia:4.36.2
     volumes:
       - config:/config
     networks:
@@ -64,14 +67,18 @@ services:
         traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
         traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
         traefik.docker.network: "proxy"
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     healthcheck:
       disable: true
     configs:
-      - source: config_20220122c
+      - source: config_20220724
         target: /config/configuration.yml
     secrets:
       - authelia_jwt_secret
       - authelia_session_secret
+      - authelia_storage_encryption_key
       - apetresc_smtp_password
       - ldap_admin_password
     environment:
@@ -80,9 +87,14 @@ services:
       - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
       - AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=/run/secrets/apetresc_smtp_password
       - AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE=/run/secrets/ldap_admin_password
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE=/run/secrets/authelia_storage_encryption_key
 
   redis:
     image: redis:alpine
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     volumes:
       - redis:/data
     networks:
@@ -139,7 +151,7 @@ volumes:
     driver: zfs
 
 configs:
-  config_20220122c:
+  config_20220724:
     file: ./config/configuration.yml
 
 secrets:
@@ -150,6 +162,8 @@ secrets:
   authelia_jwt_secret:
     external: true
   authelia_session_secret:
+    external: true
+  authelia_storage_encryption_key:
     external: true
   #authelia_redis_password:
     #external: true
