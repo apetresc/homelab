@@ -21,6 +21,9 @@ services:
         traefik.http.routers.paperless.tls.domains[0].sans: "*.apetre.sc"
         traefik.http.services.paperless.loadbalancer.server.port: 8000
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     volumes:
       - config:/config
       - documents:/data
