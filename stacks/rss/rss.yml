@@ -1,0 +1,60 @@
+version: '3.7'
+
+services:
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.rss.rule: "Host(`rss.apetre.sc`)"
+        traefik.http.routers.rss.tls.certResolver: "r53resolver"
+        traefik.http.routers.rss.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.rss.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.rss.loadbalancer.server.port: 80
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    depends_on:
+      - db
+    volumes:
+      - config:/config
+    networks:
+      - default
+      - proxy
+  db:
+    image: docker.io/postgres:12-alpine
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    secrets:
+      - freshrss_postgres_password
+    environment:
+      - POSTGRES_USER=freshrss
+      - POSTGRES_PASSWORD_FILE=/var/run/secrets/freshrss_postgres_password
+      - POSTGRES_DB=postgres
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+  config:
+    driver: zfs
+  db:
+    driver: zfs
+
+networks:
+  default:
+  proxy:
+    external: true
+
+secrets:
+  freshrss_postgres_password:
+    external: true
