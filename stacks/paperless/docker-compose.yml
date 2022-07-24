@@ -2,11 +2,13 @@ version: "3.7"
 
 services:
   paperless:
-    image: ghcr.io/linuxserver/paperless-ng
+    image: lscr.io/linuxserver/paperless-ngx:1.7.1
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Toronto
+      - PAPERLESS_URL=https://paperless.apetre.sc
+      - PAPERLESS_TIME_ZONE=America/Toronto
       - PAPERLESS_CONSUMER_POLLING=30
       - PAPERLESS_CONSUMER_RECURSIVE=true
       - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
