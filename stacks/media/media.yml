@@ -27,7 +27,7 @@ services:
         target: /config
 
   tautulli:
-    image: ghcr.io/linuxserver/tautulli:latest
+    image: lscr.io/linuxserver/tautulli:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -69,7 +69,7 @@ services:
       - ombi_config:/config
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -101,7 +101,7 @@ services:
         target: /downloads
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -130,7 +130,7 @@ services:
         target: /downloads
 
   lidarr:
-    image: ghcr.io/linuxserver/lidarr:latest
+    image: lscr.io/linuxserver/lidarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -155,6 +155,68 @@ services:
         source: music
         target: /music
         read_only: false
+
+  whisparr:
+    image: cr.hotio.dev/hotio/whisparr:nightly
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.whisparr.rule: "Host(`whisparr.apetre.sc`)"
+        traefik.http.routers.whisparr.tls.certResolver: "r53resolver"
+        traefik.http.routers.whisparr.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.whisparr.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.whisparr.loadbalancer.server.port: 6969
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: whisparr_config
+        target: /config
+      - type: volume
+        source: p
+        target: /p
+        read_only: false
+      - type: volume
+        source: unsorted
+        target: /downloads
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.bazarr.rule: "Host(`bazarr.apetre.sc`)"
+        traefik.http.routers.bazarr.tls.certResolver: "r53resolver"
+        traefik.http.routers.bazarr.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.bazarr.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.bazarr.loadbalancer.server.port: 6767
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: bazarr_config
+        target: /config
+      - type: volume
+        source: movies
+        target: /movies
+      - type: volume
+        source: shows
+        target: /shows
+      - type: volume
+        source: anime
+        target: /anime
 
   calibre-web:
     image: apetre.sc/calibre-web:latest
@@ -187,6 +249,38 @@ services:
     secrets:
       - source: calibre_web_oauth_secret
         target: /config/client_secrets.json
+
+  mylar:
+    image: lscr.io/linuxserver/mylar3:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.mylar.rule: "Host(`mylar.apetre.sc`)"
+        traefik.http.routers.mylar.tls.certResolver: "r53resolver"
+        traefik.http.routers.mylar.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.mylar.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.mylar.loadbalancer.server.port: 8090
+        traefik.docker.network: proxy
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: mylar_config
+        target: /config
+      - type: volume
+        source: unsorted
+        target: /downloads
+      - type: volume
+        source: comics_mylar
+        target: /comics
+      - type: volume
+        source: comics
+        target: /import
 
   airdcpp:
     image: gangefors/airdcpp-webclient
@@ -249,7 +343,7 @@ services:
         target: /data/Anime
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:14.3.9
     deploy:
       labels:
         traefik.enable: "true"
@@ -275,13 +369,14 @@ services:
       - qbittorrent_config:/config
       - unsorted:/downloads
       - datasets:/datasets
+      - media:/media
     ports:
-      - target: 6881
-        published: 6881
+      - target: 37881
+        published: 37881
         protocol: tcp
         mode: host
-      - target: 6881
-        published: 6881
+      - target: 37881
+        published: 37881
         protocol: udp
         mode: host
 
@@ -296,6 +391,12 @@ volumes:
   radarr_config:
     driver: zfs
   sonarr_config:
+    driver: zfs
+  whisparr_config:
+    driver: zfs
+  bazarr_config:
+    driver: zfs
+  mylar_config:
     driver: zfs
   jackett_config:
     driver: zfs
@@ -329,6 +430,12 @@ volumes:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
       device: ":/srv/nfs/tank1/media/video/Anime"
+  p:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/rclone/freezer-crypt/.p"
   books:
     driver: local
     driver_opts:
@@ -341,6 +448,18 @@ volumes:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
       device: ":/srv/nfs/tank1/media/text/Comics"
+  comics_mylar:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/text/Comics/Mylar"
+  media:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media"
   datasets:
     driver: local
     driver_opts:
