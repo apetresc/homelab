@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   agent:
-    image: portainer/agent
+    image: portainer/agent:2.14.1-alpine
     environment:
       # REQUIRED: Should be equal to the service name prefixed by "tasks." when
       # deployed inside an overlay network
@@ -17,10 +17,11 @@ services:
     deploy:
       mode: global
       placement:
-        constraints: [node.platform.os == linux]
+        constraints:
+          - node.platform.os == linux
 
   portainer:
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:2.14.1
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
@@ -30,10 +31,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-          - node.labels.ingress == true
       labels:
         traefik.enable: "true"
         traefik.http.routers.portainer.rule: "HostRegexp(`portainer.apetre.sc`)"
@@ -43,6 +40,10 @@ services:
         traefik.http.services.portainer.loadbalancer.server.port: 9000
         traefik.http.routers.portainer.service: portainer
         traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.ingress == true
 
 networks:
   agent_network:
