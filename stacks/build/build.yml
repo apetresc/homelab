@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   gitea:
-    image: gitea/gitea:1.16.9
+    image: gitea/gitea:1.17.0
     deploy:
       labels:
         traefik.enable: "true"
@@ -26,6 +26,7 @@ services:
       - GITEA__database__NAME=gitea
       - GITEA__database__USER=gitea
       - GITEA__database__PASSWD=gitea
+      - GITEA__repository__DEFAULT_BRANCH=master
       - DISABLE_REGISTRATION=true
       - REQUIRE_SIGNIN_VIEW=true
     networks:
