@@ -375,6 +375,64 @@ services:
         source: anime
         target: /data/Anime
 
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank1
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - VERSION=docker
+    volumes:
+      - plex_data:/config
+      - /tank1/media/video/Movies:/movies
+      - /tank1/media/video/Shows:/shows
+      - /tank1/media/audio/Music:/music
+    ports:
+      - target: 32400
+        published: 32400
+        protocol: tcp
+        mode: host
+      - target: 1900
+        published: 1900
+        protocol: udp
+        mode: host
+      - target: 3005
+        published: 3005
+        protocol: tcp
+        mode: host
+      - target: 5353
+        published: 5353
+        protocol: udp
+        mode: host
+      - target: 8324
+        published: 8324
+        protocol: tcp
+        mode: host
+      - target: 32410
+        published: 32410
+        protocol: udp
+        mode: host
+      - target: 32412
+        published: 32412
+        protocol: udp
+        mode: host
+      - target: 32413
+        published: 32413
+        protocol: udp
+        mode: host
+      - target: 32414
+        published: 32414
+        protocol: udp
+        mode: host
+      - target: 32469
+        published: 32469
+        protocol: tcp
+        mode: host
+
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:14.3.9
     deploy:
@@ -440,6 +498,7 @@ volumes:
     driver: zfs
   airdcpp_data:
     driver: zfs
+  plex_data:
   qbittorrent_config:
     driver: zfs
   music:
