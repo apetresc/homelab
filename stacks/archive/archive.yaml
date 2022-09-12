@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   tubearchivist:
-    image: bbilly1/tubearchivist:v0.2.0
+    image: bbilly1/tubearchivist:v0.2.1
     deploy:
       labels:
         traefik.enable: "true"
