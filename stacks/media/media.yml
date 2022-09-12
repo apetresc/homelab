@@ -243,7 +243,7 @@ services:
         target: /anime
 
   calibre-web:
-    image: apetre.sc/calibre-web:latest
+    image: apetresc/calibre-web:0.6.19
     environment:
       - PUID=1000
       - GUID=1000
