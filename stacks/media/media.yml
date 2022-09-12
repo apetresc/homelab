@@ -174,6 +174,39 @@ services:
         target: /music
         read_only: false
 
+  stash:
+    image: stashapp/stash:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.stash.rule: "Host(`stash.apetre.sc`)"
+        traefik.http.routers.stash.tls.certResolver: "r53resolver"
+        traefik.http.routers.stash.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.stash.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.stash.loadbalancer.server.port: 9999
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    environment:
+      - STASH_STASH=/data/
+      - STASH_GENERATED=/generated/
+      - STASH_METADATA=/metadata/
+      - STASH_CACHE=/cache/
+      - STASH_PORT=9999
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - stash_config:/root/.stash
+      - type: volume
+        source: p
+        target: /data
+        read_only: false
+      - stash_metadata:/metadata
+      - stash_cache:/cache
+      - stash_generated:/generated
+
   whisparr:
     image: cr.hotio.dev/hotio/whisparr:nightly
     deploy:
@@ -497,6 +530,14 @@ volumes:
   calibre_config:
     driver: zfs
   airdcpp_data:
+    driver: zfs
+  stash_config:
+    driver: zfs
+  stash_metadata:
+    driver: zfs
+  stash_cache:
+    driver: zfs
+  stash_generated:
     driver: zfs
   plex_data:
   qbittorrent_config:
