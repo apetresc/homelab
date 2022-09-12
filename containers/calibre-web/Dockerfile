@@ -1,4 +1,4 @@
-FROM lscr.io/linuxserver/calibre-web:latest
+FROM lscr.io/linuxserver/calibre-web:0.6.19
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install pcregrep && \
