@@ -52,3 +52,93 @@ resource "aws_route53_record" "qbittorrent_apetre_sc" {
   ttl = 300
 }
 
+resource "aws_route53_record" "sonarr_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "sonarr.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "radarr_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "radarr.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "lidarr_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "lidarr.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "stash_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "stash.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "whisparr_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "whisparr.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "bazarr_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "bazarr.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "mylar_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "mylar.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "git_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "git.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "invoice_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "invoice.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
+resource "aws_route53_record" "tube_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "tube.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
