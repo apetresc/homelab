@@ -423,6 +423,7 @@ services:
       - plex_data:/config
       - /tank1/media/video/Movies:/movies
       - /tank1/media/video/Shows:/shows
+      - /tank1/media/video/Anime:/anime
       - /tank1/media/audio/Music:/music
     ports:
       - target: 32400
