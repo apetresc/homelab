@@ -133,6 +133,15 @@ resource "aws_route53_record" "invoice_apetre_sc" {
   ttl = 300
 }
 
+resource "aws_route53_record" "scrutiny_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "scrutiny.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl = 300
+}
+
 resource "aws_route53_record" "tube_apetre_sc" {
   zone_id = data.aws_route53_zone.apetre_sc.id
   name    = "tube.apetre.sc"

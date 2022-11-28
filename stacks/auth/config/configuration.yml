@@ -54,6 +54,8 @@ access_control:
       policy: two_factor
     - domain: qbittorrent.apetre.sc
       policy: two_factor
+    - domain: scrutiny.apetre.sc
+      policy: two_factor
 
 session:
   name: authelia_session

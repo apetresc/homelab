@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  influxdb:
+    image: influxdb:2.2
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - default
+    volumes:
+      - 'influx:/var/lib/influxdb2'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  web:
+    image: 'ghcr.io/analogj/scrutiny:v0.5.0-web'
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.scrutiny.rule: "Host(`scrutiny.apetre.sc`)"
+        traefik.http.routers.scrutiny.tls.certResolver: "r53resolver"
+        traefik.http.routers.scrutiny.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.scrutiny.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.scrutiny.loadbalancer.server.port: 8080
+        traefik.http.routers.scrutiny.middlewares: "authelia@docker"
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - default
+      - proxy
+    volumes:
+      - 'web_config:/opt/scrutiny/config'
+    environment:
+      SCRUTINY_WEB_INFLUXDB_HOST: 'influxdb'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+
+networks:
+  default:
+    name: scrutiny
+    driver: overlay
+    attachable: true
+  proxy:
+    external: true
+
+volumes:
+  influx:
+    driver: zfs
+  web_config:
+    driver: zfs
