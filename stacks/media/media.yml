@@ -30,7 +30,7 @@ services:
         target: /config
 
   tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
+    image: linuxserver/tautulli:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -54,7 +54,7 @@ services:
       - tautulli_config:/config
 
   ombi:
-    image: lscr.io/linuxserver/ombi:latest
+    image: linuxserver/ombi:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -78,7 +78,7 @@ services:
       - ombi_config:/config
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -113,7 +113,7 @@ services:
         target: /downloads
 
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -145,7 +145,7 @@ services:
         target: /downloads
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
+    image: linuxserver/lidarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -241,7 +241,7 @@ services:
         target: /downloads
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr
+    image: linuxserver/bazarr
     deploy:
       labels:
         traefik.enable: "true"
@@ -311,7 +311,7 @@ services:
         target: /config/client_secrets.json
 
   mylar:
-    image: lscr.io/linuxserver/mylar3:latest
+    image: linuxserver/mylar3:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -409,7 +409,7 @@ services:
         target: /data/Anime
 
   plex:
-    image: lscr.io/linuxserver/plex:latest
+    image: linuxserver/plex:latest
     deploy:
       placement:
         constraints:
@@ -468,7 +468,7 @@ services:
         mode: host
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:14.3.9
+    image: linuxserver/qbittorrent:14.3.9
     deploy:
       labels:
         traefik.enable: "true"
