@@ -20,7 +20,7 @@ http:
           - main: apetre.sc
             sans:
               - "*.apetre.sc"
-    apetresc:
+    homeassistant:
       rule: "Host(`ha.apetre.sc`)"
       service: homeassistant
       tls:

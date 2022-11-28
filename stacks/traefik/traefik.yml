@@ -30,7 +30,7 @@ services:
     configs:
       - source: traefik_20210622
         target: /etc/traefik/traefik.yaml
-      - source: extra_services_20210622
+      - source: extra_services_20221128
         target: /etc/traefik/extra_services.yaml
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -49,7 +49,7 @@ volumes:
 configs:
   traefik_20210622:
     file: ./config/traefik.yaml
-  extra_services_20210622:
+  extra_services_20221128:
     file: ./config/extra_services.yaml
 
 secrets:
