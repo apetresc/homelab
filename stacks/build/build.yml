@@ -35,6 +35,7 @@ services:
       - observe
     volumes:
       - git:/data
+      - repos:/data/git
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - db
@@ -60,6 +61,12 @@ volumes:
     driver: zfs
   data:
     driver: zfs
+  repos:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/misc/Software/Source"
 
 networks:
   default:
