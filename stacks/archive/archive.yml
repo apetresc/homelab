@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   tubearchivist:
-    image: bbilly1/tubearchivist:v0.2.1
+    image: bbilly1/tubearchivist:v0.3.0
     deploy:
       labels:
         traefik.enable: "true"
@@ -35,7 +35,7 @@ services:
       - archivist-es
       - archivist-redis
   archivist-redis:
-    image: redislabs/rejson:2.0.11
+    image: redislabs/rejson:2.4.2
     deploy:
       placement:
         constraints:
@@ -47,7 +47,7 @@ services:
     depends_on:
       - archivist-es
   archivist-es:
-    image: bbilly1/tubearchivist-es:8.3.2
+    image: bbilly1/tubearchivist-es:8.5.1
     deploy:
       placement:
         constraints:
@@ -57,6 +57,7 @@ services:
       - "ELASTIC_PASSWORD=verysecret"
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "path.repo=/usr/share/elasticsearch/data/snapshot"
     ulimits:
       memlock:
         soft: -1
