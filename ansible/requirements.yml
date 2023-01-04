@@ -1,7 +1,12 @@
-- src: https://github.com/geerlingguy/ansible-role-nfs
-  name: geerlingguy.nfs
-  version: master
-- name: bertvv.samba
-- src: https://github.com/apetresc/ansible-role-wsdd
-  name: wsdd
-  version: main
+roles:
+  - src: https://github.com/geerlingguy/ansible-role-nfs
+    name: geerlingguy.nfs
+    version: master
+  - src: https://github.com/apetresc/ansible-role-wsdd
+    name: wsdd
+    version: main
+  - name: radek_sprta.sanoid
+collections:
+  - name: https://github.com/vladgh/ansible-collection-vladgh-samba
+    version: v3.0.2
+    type: git

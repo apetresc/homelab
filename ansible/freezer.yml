@@ -58,5 +58,4 @@
         group: apetresc
         write_list: apetresc,jelee
   roles:
-    - role: bertvv.samba
-    - role: wsdd
+    - role: vladgh.samba.server
