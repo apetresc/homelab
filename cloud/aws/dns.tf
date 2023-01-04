@@ -31,7 +31,7 @@ resource "aws_route53_record" "paperless_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "sftp_apetre_sc" {
@@ -40,7 +40,7 @@ resource "aws_route53_record" "sftp_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "qbittorrent_apetre_sc" {
@@ -49,7 +49,7 @@ resource "aws_route53_record" "qbittorrent_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "sonarr_apetre_sc" {
@@ -58,7 +58,7 @@ resource "aws_route53_record" "sonarr_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "radarr_apetre_sc" {
@@ -67,7 +67,7 @@ resource "aws_route53_record" "radarr_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "lidarr_apetre_sc" {
@@ -76,7 +76,7 @@ resource "aws_route53_record" "lidarr_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "stash_apetre_sc" {
@@ -85,7 +85,7 @@ resource "aws_route53_record" "stash_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "whisparr_apetre_sc" {
@@ -94,7 +94,7 @@ resource "aws_route53_record" "whisparr_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "bazarr_apetre_sc" {
@@ -103,7 +103,16 @@ resource "aws_route53_record" "bazarr_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
+}
+
+resource "aws_route53_record" "komga_apetre_sc" {
+  zone_id = data.aws_route53_zone.apetre_sc.id
+  name    = "komga.apetre.sc"
+  type    = "CNAME"
+
+  records = ["home.apetre.sc"]
+  ttl     = 300
 }
 
 resource "aws_route53_record" "mylar_apetre_sc" {
@@ -112,7 +121,7 @@ resource "aws_route53_record" "mylar_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "git_apetre_sc" {
@@ -121,7 +130,7 @@ resource "aws_route53_record" "git_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "invoice_apetre_sc" {
@@ -130,7 +139,7 @@ resource "aws_route53_record" "invoice_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "scrutiny_apetre_sc" {
@@ -139,7 +148,7 @@ resource "aws_route53_record" "scrutiny_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
 resource "aws_route53_record" "tube_apetre_sc" {
@@ -148,6 +157,6 @@ resource "aws_route53_record" "tube_apetre_sc" {
   type    = "CNAME"
 
   records = ["home.apetre.sc"]
-  ttl = 300
+  ttl     = 300
 }
 
