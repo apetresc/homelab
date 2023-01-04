@@ -42,6 +42,13 @@
         opts: bind
         state: mounted
         fstype: none
+    - name: Bind mount rclone
+      ansible.posix.mount:
+        path: /srv/smb/rclone
+        src: /srv/nfs/rclone
+        opts: rbind
+        state: mounted
+        fstype: none
 
   vars:
     samba_global_include: smb-conf-global-includes.conf
@@ -57,5 +64,11 @@
         valid_users: apetresc,jelee
         group: apetresc
         write_list: apetresc,jelee
+      - name: rclone
+        public: no
+        valid_users: apetresc
+        group: root
+        write_list: apetresc
+
   roles:
     - role: vladgh.samba.server

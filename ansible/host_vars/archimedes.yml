@@ -2,6 +2,6 @@
 nfs_network: "192.168.1.0/24"
 nfs_exports:
   - /srv/nfs {{ nfs_network }}(rw,async,no_subtree_check,crossmnt,fsid=0)
-  - /srv/nfs/rclone/freezer {{ nfs_network }}(rw,async,no_subtree_check,no_root_squash,fsid=1)
-  - /srv/nfs/rclone/freezer-crypt {{ nfs_network }}(rw,async,no_subtree_check,no_root_squash,fsid=2)
+  - /srv/nfs/rclone/freezer {{ nfs_network }}(rw,async,no_subtree_check,no_root_squash,crossmnt,nohide,fsid=1)
+  - /srv/nfs/rclone/freezer-crypt {{ nfs_network }}(rw,async,no_subtree_check,no_root_squash,crossmnt,nohide,fsid=2)
   - /srv/nfs/tank1 {{ nfs_network }}(rw,async,no_subtree_check,no_root_squash,crossmnt,fsid=5)
