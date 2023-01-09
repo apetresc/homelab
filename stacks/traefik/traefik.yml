@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   reverse_proxy:
-    image: traefik:v2.9.5
+    image: traefik:v2.9.6
     deploy:
       placement:
         constraints:
@@ -23,12 +23,16 @@ services:
         published: 443
         protocol: tcp
         mode: host
+      - target: 2222
+        published: 2222
+        protocol: tcp
+        mode: host
       - target: 8081
         published: 8081
         protocol: tcp
         mode: host
     configs:
-      - source: traefik_20210622
+      - source: traefik_20230105f
         target: /etc/traefik/traefik.yaml
       - source: extra_services_20221128
         target: /etc/traefik/extra_services.yaml
@@ -47,7 +51,7 @@ volumes:
     driver: zfs
 
 configs:
-  traefik_20210622:
+  traefik_20230105f:
     file: ./config/traefik.yaml
   extra_services_20221128:
     file: ./config/extra_services.yaml

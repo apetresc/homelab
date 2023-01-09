@@ -12,6 +12,8 @@ entryPoints:
           to: https
           scheme: https
           permanent: true
+  ssh:
+    address: ":2222"
   traefik:
     address: ":8081"
   metrics:

@@ -4,14 +4,14 @@ Protocol 2
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_rsa_key
 
-
-KexAlgorithms +diffie-hellman-group1-sha1
-Ciphers +aes128-cbc
-PubkeyAcceptedKeyTypes=+ssh-dss
-
 # Faster connection
 # See: https://github.com/atmoz/sftp/issues/11
 UseDNS no
+
+# Only allow SSH key authentication
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM no
 
 # Limited access
 PermitRootLogin no

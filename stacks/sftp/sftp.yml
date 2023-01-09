@@ -2,46 +2,86 @@ version: "3.7"
 
 services:
   sftp:
-    image: atmoz/sftp
-    labels:
+    image: ghcr.io/atmoz/sftp/debian:latest
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank1
+      labels:
         shepherd.enable: "true"
-    ports:
-      - "2221:22"
+        traefik.enable: "true"
+        traefik.tcp.routers.sftp.rule: "HostSNI(`*`)"
+        traefik.tcp.routers.sftp.entrypoints: ssh
+        traefik.tcp.routers.sftp.service: sftp-svc
+        traefik.tcp.services.sftp-svc.loadbalancer.server.port: 22
+        traefik.docker.network: proxy
+    networks:
+      - proxy
     configs:
-      - source: sshd_config_20210908
+      - source: sshd_config_20230105e
         target: /etc/ssh/sshd_config
+      - source: pull_public_keys
+        target: /etc/sftp.d/10-ssh_keys.sh
+        mode: 0555
     secrets:
-      - source: sftp_users_20210908
+      - source: sftp_users_20230105
         target: /etc/sftp/users.conf
+      - source: sftp_host_ed25519_key
+        target: /etc/ssh/ssh_host_ed25519_key
+        mode: 0400
+      - source: sftp_host_ed25519_pub
+        target: /etc/ssh/ssh_host_ed25519_key.pub
+        mode: 0400
+      - source: sftp_host_rsa_key
+        target: /etc/ssh/ssh_host_rsa_key
+        mode: 0400
+      - source: sftp_host_rsa_pub
+        target: /etc/ssh/ssh_host_rsa_key.pub
+        mode: 0400
     volumes:
-      - "ssh_keys:/etc/ssh"
-      - "freezer:/home/apetresc/freezer:ro"
-      - "freezer_goworldvideo:/home/shalexander/goworldvideo:ro"
+      - /tank1/media:/home/apetresc/media:ro
+      - /tank1/media/audio:/home/meftimes/audio:ro
+      - /tank1/media/video:/home/meftimes/video:ro
+      - /tank1/unsorted/ftp/meftimes:/home/meftimes/upload
+      - /tank1/media/audio:/home/yuribak/audio:ro
+      - /tank1/media/video:/home/yuribak/video:ro
+      - /tank1/unsorted/ftp/yuribak:/home/yuribak/upload
 
 configs:
-  sshd_config_20210908:
+  sshd_config_20230105e:
     file: ./config/sshd_config
+  pull_public_keys:
+    file: ./config/10-ssh_keys.sh
 
 secrets:
-  sftp_users_20210908:
+  sftp_users_20230105:
+    external: true
+  sftp_host_ed25519_key:
+    external: true
+  sftp_host_ed25519_pub:
+    external: true
+  sftp_host_rsa_key:
+    external: true
+  sftp_host_rsa_pub:
     external: true
 
+networks:
+  proxy:
+    external: true
 
-volumes:
-  ssh_keys:
-    driver: zfs
-  freezer:
-    driver: rclone
-    driver_opts:
-      remote: 'gdrive:freezer'
-      allow_other: 'true'
-      vfs_cache_mode: 'full'
-      poll_interval: 0
-  freezer_goworldvideo:
-    driver: rclone
-    driver_opts:
-      remote: 'gdrive:freezer/YouTube/Go World Video'
-      allow_other: 'true'
-      vfs_cache_mode: 'full'
-      vfs_cache_max_size: '30G'
-      poll_interval: 0
+#volumes:
+  # freezer:
+  #   driver: rclone
+  #   driver_opts:
+  #     remote: 'gdrive:freezer'
+  #     allow_other: 'true'
+  #     vfs_cache_mode: 'full'
+  #     poll_interval: 0
+  # freezer_goworldvideo:
+  #   driver: rclone
+  #   driver_opts:
+  #     remote: 'gdrive:freezer/YouTube/Go World Video'
+  #     allow_other: 'true'
+  #     vfs_cache_mode: 'full'
+  #     vfs_cache_max_size: '30G'
+  #     poll_interval: 0
