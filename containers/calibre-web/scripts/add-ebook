@@ -16,7 +16,14 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
   read -p "Tags? " -r tags
-  output=$(calibredb --with-library=$CALIBRE_LIBRARY add -m overwrite "$FILENAME")
+  if [[ -d $FILENAME ]]; then
+    output=$(calibredb --with-library=$CALIBRE_LIBRARY add -m overwrite -l -r "$FILENAME")
+  elif [[ -f $FILENAME ]]; then
+    output=$(calibredb --with-library=$CALIBRE_LIBRARY add -m overwrite "$FILENAME")
+  else
+    echo "$FILENAME is not a file or directory"
+    exit 1
+  fi
   ids=$(echo $output | pcregrep -o1 "Added book ids: (\d+)$")
   calibredb --with-library=$CALIBRE_LIBRARY set_metadata $ids /tmp/metadata.opf
   calibredb --with-library=$CALIBRE_LIBRARY set_metadata -f rating:0 \
