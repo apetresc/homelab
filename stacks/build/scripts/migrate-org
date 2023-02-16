@@ -1,0 +1,73 @@
+#!/bin/bash -ex
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+
+    case $key in
+        -o|--org)
+            GITHUB_ORGANISATION="$2"
+            shift
+            shift
+            ;;
+        *)
+            # unknown option
+            echo "Unknown option $key"
+            exit 1
+            ;;
+    esac
+done
+
+# Check if GITHUB_ORGANISATION is set
+if [[ -z "$GITHUB_ORGANISATION" ]]
+then
+    echo "Please provide a GitHub organisation using the -o or --org flag"
+    exit 1
+fi
+
+
+GITHUB_USERNAME=apetresc
+GITEA_DOMAIN=git.apetre.sc
+
+# Check if the Gitea organization exists, create it if it doesn't
+if ! curl -i -H "accept: application/json" -s "https://$GITEA_DOMAIN/api/v1/orgs/$GITHUB_ORGANISATION?token=$GITEA_API_TOKEN" | grep "HTTP/2 200" > /dev/null; then
+  echo "Gitea organization $GITHUB_ORGANISATION does not exist, creating..."
+  GITHUB_ORG=$(curl -H "Authorization: token $GITHUB_API_TOKEN" -s "https://api.github.com/orgs/$GITHUB_ORGANISATION")
+  GITEA_ORG_JSON="{\"username\": \"$GITHUB_ORGANISATION\", \"full_name\": $(echo $GITHUB_ORG | jq '.name // .login'), \"location\": $(echo $GITHUB_ORG | jq '.location'), \"description\": $(echo $GITHUB_ORG | jq '.description'), \"website\": $(echo $GITHUB_ORG | jq '.blog')}"
+  curl -X POST -H "Content-Type: application/json" -d "$GITEA_ORG_JSON" "https://$GITEA_DOMAIN/api/v1/orgs?token=$GITEA_API_TOKEN"
+fi
+
+PAGE=1
+HAS_MORE=true
+
+while $HAS_MORE; do
+  GET_REPOS=$(curl -H 'Accept: application/vnd.github.v3+json' -u $GITHUB_USERNAME:$GITHUB_API_TOKEN -s "https://api.github.com/orgs/$GITHUB_ORGANISATION/repos?&per_page=100&page=$PAGE&type=all" | jq -r '.[].html_url')
+
+  if [ -z "$GET_REPOS" ]; then
+      HAS_MORE=false
+      break
+  fi
+
+  for URL in $GET_REPOS; do
+
+      REPO_NAME=$(echo $URL | sed "s|https://github.com/$GITHUB_ORGANISATION/||g")
+
+      echo "Found $REPO_NAME, importing..."
+
+      curl -X POST "https://$GITEA_DOMAIN/api/v1/repos/migrate" -u $GITEA_USERNAME:$GITEA_API_TOKEN -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \
+      \"auth_username\": \"$GITHUB_USERNAME\", \
+      \"auth_password\": \"$GITHUB_API_TOKEN\", \
+      \"clone_addr\": \"$URL\", \
+      \"mirror\": true, \
+      \"private\": false, \
+      \"lfs\": true, \
+      \"repo_name\": \"$REPO_NAME\", \
+      \"repo_owner\": \"$GITHUB_ORGANISATION\", \
+      \"service\": \"github\", \
+      \"wiki\": true}"
+
+  done
+
+  PAGE=$((PAGE+1))
+done
