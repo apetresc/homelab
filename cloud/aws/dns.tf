@@ -79,15 +79,6 @@ resource "aws_route53_record" "lidarr_apetre_sc" {
   ttl     = 300
 }
 
-resource "aws_route53_record" "stash_apetre_sc" {
-  zone_id = data.aws_route53_zone.apetre_sc.id
-  name    = "stash.apetre.sc"
-  type    = "CNAME"
-
-  records = ["home.apetre.sc"]
-  ttl     = 300
-}
-
 resource "aws_route53_record" "whisparr_apetre_sc" {
   zone_id = data.aws_route53_zone.apetre_sc.id
   name    = "whisparr.apetre.sc"
