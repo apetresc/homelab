@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  znc:
+    image: lscr.io/linuxserver/znc:version-znc-1.8.2
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.znc.rule: "Host(`znc.apetre.sc`)"
+        traefik.http.routers.znc.tls.certResolver: "r53resolver"
+        traefik.http.routers.znc.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.znc.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.znc.loadbalancer.server.port: 6501
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    networks:
+      - proxy
+    ports:
+      - target: 12112
+        published: 12112
+        protocol: tcp
+        mode: host
+    volumes:
+      - config:/config
+    secrets:
+      - znc_cert
+
+volumes:
+  config:
+    driver: zfs
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  znc_cert:
+    external: true
