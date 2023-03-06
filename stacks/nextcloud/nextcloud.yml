@@ -4,6 +4,9 @@ services:
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:24.0.3
     deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
       labels:
         traefik.enable: "true"
         traefik.http.routers.nextcloud.rule: "Host(`cloud.apetre.sc`)"
@@ -46,6 +49,10 @@ services:
 
   db:
     image: postgres:12-alpine
+    deploy:
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
     secrets:
       - nextcloud_postgres_password
     environment:
