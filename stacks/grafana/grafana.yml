@@ -37,7 +37,7 @@ services:
 
 
   prometheus:
-    image: prom/prometheus:v2.41.0
+    image: prom/prometheus:v2.43.0
     deploy:
       placement:
         constraints:
