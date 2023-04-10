@@ -30,6 +30,8 @@ services:
       - config:/config
     secrets:
       - znc_cert
+      - source: znc_burnerphone_cert
+        target: /config/users/burnerphone/moddata/cert/user.pem
 
 volumes:
   config:
@@ -41,4 +43,6 @@ networks:
 
 secrets:
   znc_cert:
+    external: true
+  znc_burnerphone_cert:
     external: true
