@@ -210,7 +210,7 @@ services:
         target: /anime
 
   calibre-web:
-    image: ghcr.io/apetresc/calibre-web:0.6.19
+    image: ghcr.io/apetresc/calibre-web:0.6.20
     environment:
       - PUID=1000
       - GUID=1000
