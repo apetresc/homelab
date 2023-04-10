@@ -44,12 +44,8 @@ services:
           - node.labels.zpool == tank2
     networks:
       - observe
-    extra_hosts:
-      - "euclid:192.168.1.128"
-      - "pythagoras:192.168.1.129"
-      - "archimedes:192.168.1.130"
     configs:
-      - source: prometheus_config
+      - source: prometheus_config_20230410b
         target: /etc/prometheus/prometheus.yml
     volumes:
       - type: volume
@@ -57,7 +53,7 @@ services:
         target: /prometheus
 
 configs:
-  prometheus_config:
+  prometheus_config_20230410b:
     file: ./config/prometheus/prometheus.yml
   grafana_provision_dashboards:
     file: ./config/grafana/provisioning/dashboards/provider.yaml
