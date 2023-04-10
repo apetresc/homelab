@@ -1,5 +1,7 @@
 ARG VERSION
+
 FROM lscr.io/linuxserver/calibre-web:${VERSION}
+LABEL org.opencontainers.image.source https://github.com/apetresc/homelab
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install pcregrep && \
