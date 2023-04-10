@@ -1,10 +1,14 @@
 #!/bin/bash -ex
 
-export CALIBRE_LIBRARY=/books
+CALIBRE_LIBRARY=/books
 
-export BOOK_ID="$1"
-export COVER_URL="$2"
+BOOK_ID="$1"
+COVER_PATH="$2"
 
-curl "$COVER_URL" > /tmp/cover.jpg
-calibredb --with-library=$CALIBRE_LIBRARY set_metadata -f cover:/tmp/cover.jpg $BOOK_ID
+if [[ COVER_PATH == http* ]]; then
+  curl "$COVER_PATH" > /tmp/cover.jpg
+  COVER_PATH=/tmp/cover.jpg
+fi
+
+calibredb --with-library=$CALIBRE_LIBRARY set_metadata -f cover:$COVER_PATH $BOOK_ID
 
