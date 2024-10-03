@@ -1,0 +1,25 @@
+
+version: '3.7'
+
+services:
+  yakgpt:
+    image: yakgpt/yakgpt:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.yakgpt.rule: "Host(`yakgpt.apetre.sc`)"
+        traefik.http.routers.yakgpt.tls.certResolver: "r53resolver"
+        traefik.http.routers.yakgpt.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.yakgpt.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.yakgpt.loadbalancer.server.port: 3000
+        traefik.docker.network: proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
