@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   gitea:
-    image: gitea/gitea:1.19.3
+    image: gitea/gitea:1.22.2
     deploy:
       labels:
         traefik.enable: "true"
