@@ -12,8 +12,8 @@ home servers.
 - `euclid`: An Intel S2600GZ with an Intel Xeon CPU E5-2620 @ 2.00GHz and 64GB
   of ECC RAM running Proxmox.
 - `coxeter`: An ASUS RAMPAGE V EDITION 10 with 64GB of non-ECC DDR4 RAM running
-  Windows 10 inside Hyper-V alongside a WSL2 engine running Kubernetes.
-- `newton`: An M1 Mac Mini with 16GB of RAM running macOS 11.5.
+  Proxmox.
+- `newton`: An M1 Mac Mini with 16GB of RAM running macOS 14.
 
 
 ## Configuration
