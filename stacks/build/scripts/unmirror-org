@@ -1,0 +1,55 @@
+#!/bin/bash -ex
+
+# Check if organization name is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <organization-name>"
+    exit 1
+fi
+
+# Gitea instance details
+GITEA_URL="https://git.apetre.sc"
+ORGANIZATION="$1"
+
+# Headers for API requests
+AUTH_HEADER="Authorization: token $GITEA_API_TOKEN"
+CONTENT_TYPE="Content-Type: application/json"
+
+# Function to get all repositories for an organization
+get_org_repos() {
+    curl -s -H "$AUTH_HEADER" "$GITEA_URL/api/v1/orgs/$ORGANIZATION/repos"
+}
+
+# Function to convert a mirror repository to a regular repository
+convert_mirror_to_regular() {
+    local owner="$1"
+    local repo="$2"
+    curl -s -X PATCH -H "$AUTH_HEADER" -H "$CONTENT_TYPE" \
+         -d '{"mirror": false}' \
+         "$GITEA_URL/api/v1/repos/$owner/$repo"
+}
+
+# Main script
+main() {
+    repos=$(get_org_repos)
+
+    echo "$repos" | jq -c '.[]' | while read -r repo; do
+        name=$(echo "$repo" | jq -r '.name')
+        is_mirror=$(echo "$repo" | jq -r '.mirror')
+        full_name=$(echo "$repo" | jq -r '.full_name')
+
+        if [ "$is_mirror" = "true" ]; then
+            echo "Converting $full_name from mirror to regular repository..."
+            result=$(convert_mirror_to_regular "$ORGANIZATION" "$name")
+            if [ "$(echo "$result" | jq -r '.mirror')" = "false" ]; then
+                echo "Successfully converted $full_name"
+            else
+                echo "Failed to convert $full_name"
+            fi
+        else
+            echo "Skipping $full_name as it's not a mirror"
+        fi
+    done
+}
+
+# Run the main function
+main
