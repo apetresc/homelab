@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   reverse_proxy:
-    image: traefik:v2.9.6
+    image: traefik:v2.9.10
     deploy:
       placement:
         constraints:
@@ -34,7 +34,7 @@ services:
     configs:
       - source: traefik_20230105f
         target: /etc/traefik/traefik.yaml
-      - source: extra_services_20221128
+      - source: extra_services_20240215
         target: /etc/traefik/extra_services.yaml
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -53,7 +53,7 @@ volumes:
 configs:
   traefik_20230105f:
     file: ./config/traefik.yaml
-  extra_services_20221128:
+  extra_services_20240215:
     file: ./config/extra_services.yaml
 
 secrets:

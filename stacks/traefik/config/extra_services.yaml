@@ -8,6 +8,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.10:8123"
+    mlflow:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.98:8080"
 
 
   routers:
@@ -23,6 +27,15 @@ http:
     homeassistant:
       rule: "Host(`ha.apetre.sc`)"
       service: homeassistant
+      tls:
+        certResolver: r53resolver
+        domains:
+          - main: apetre.sc
+            sans:
+              - "*.apetre.sc"
+    mlflow:
+      rule: "Host(`mlflow.apetre.sc`)"
+      service: mlflow
       tls:
         certResolver: r53resolver
         domains:
