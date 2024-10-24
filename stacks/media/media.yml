@@ -353,6 +353,9 @@ services:
       - PGID=1000
       - TZ=America/Toronto
       - VERSION=docker
+    configs:
+      - source: plex_absolute_series_scanner
+        target: "/config/Library/Application Support/Plex Media Server/Scanners/Series/Absolute Series Scanner.py"
     volumes:
       - plex_data:/config
       - /tank1/media/video/Movies:/movies
@@ -544,6 +547,8 @@ networks:
 configs:
   qbittorrent_script_postprocess_torrent:
     file: ./scripts/postprocess-torrent
+  plex_absolute_series_scanner:
+    file: ./plex_plugins/Absolute Series Scanner.py
 
 secrets:
   calibre_web_oauth_secret:
