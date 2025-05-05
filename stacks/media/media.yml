@@ -478,9 +478,11 @@ services:
       - plex_data:/config
       - /tank1/media/video/Movies:/movies
       - /tank1/media/video/Movies [4K]:/movies4k
+      - /tank1/media/video/Courses:/courses
       - /tank1/media/video/Shows:/shows
       - /tank1/media/video/Anime:/anime
       - /tank1/media/audio/Music:/music
+      - /tank1/media/video/Music Videos:/musicvideos
       - /tank1/media/audio/Audiobooks:/audiobooks
     ports:
       - target: 32400
