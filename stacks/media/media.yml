@@ -368,7 +368,7 @@ services:
         target: /import
 
   airdcpp:
-    image: gangefors/airdcpp-webclient:2.11.4
+    image: gangefors/airdcpp-webclient:2.12.2
     deploy:
       labels:
         traefik.enable: "true"
