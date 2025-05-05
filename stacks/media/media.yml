@@ -272,6 +272,66 @@ services:
         source: audiobooks
         target: /audiobooks
 
+  komga:
+    image: gotson/komga:1.21.2
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.komga.rule: "Host(`komga.apetre.sc`)"
+        traefik.http.routers.komga.tls.certResolver: "r53resolver"
+        traefik.http.routers.komga.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.komga.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.komga.loadbalancer.server.port: 25600
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - default
+      - proxy
+    volumes:
+      - type: volume
+        source: komga_config
+        target: /config
+      - type: volume
+        source: comics
+        target: /data
+    user: 1000:1000
+    environment:
+      - TZ=America/Toronto
+      - JAVA_TOOL_OPTIONS=-Xmx4g
+      - KOMGA_CORS_ALLOWED_ORIGINS=komf.apetre.sc
+
+  komf:
+    image: sndxr/komf:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.komf.rule: "Host(`komf.apetre.sc`)"
+        traefik.http.routers.komf.tls.certResolver: "r53resolver"
+        traefik.http.routers.komf.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.komf.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.komf.loadbalancer.server.port: 8085
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - default
+      - proxy
+    user: "1000:1000"
+    environment:
+      - KOMF_KOMGA_BASE_URI=http://komga:25600
+      - KOMF_KOMGA_USER=adrian@apetre.sc
+      - KOMF_KOMGA_PASSWORD=qrb9Z9bafiCBJUS
+      - KOMF_LOG_LEVEL=INFO
+      # optional jvm options. Example config for low memory usage. Runs guaranteed cleanup up every 3600000ms(1hour)
+      #- JAVA_TOOL_OPTIONS=-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:ShenandoahGuaranteedGCInterval=3600000 -XX:TrimNativeHeapInterval=3600000
+    volumes:
+      - type: volume
+        source: komf_config
+        target: /config
+
   mylar:
     image: lscr.io/linuxserver/mylar3:latest
     deploy:
@@ -489,7 +549,9 @@ volumes:
     driver: zfs
   sonarr_config:
     driver: zfs
-  bazarr_config:
+  komga_config:
+    driver: zfs
+  komf_config:
     driver: zfs
   mylar_config:
     driver: zfs
@@ -565,7 +627,7 @@ volumes:
     driver_opts:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
-      device: ":/srv/nfs/tank1/media/text/Comics/Mylar"
+      device: ":/srv/nfs/tank1/media/text/Comics/Komga/Comics"
   media:
     driver: local
     driver_opts:
@@ -595,6 +657,8 @@ configs:
     file: ./scripts/postprocess-torrent
   plex_absolute_series_scanner:
     file: ./plex_plugins/Absolute Series Scanner.py
+  komf_config:
+    file: ./config/komf/application.yml
 
 secrets:
   calibre_web_oauth_secret:
