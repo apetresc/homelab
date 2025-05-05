@@ -48,7 +48,7 @@ services:
       - proxy
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
       - TZ=America/Toronto
     volumes:
       - tautulli_config:/config
@@ -96,7 +96,7 @@ services:
       - proxy
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
       - TZ=America/Toronto
     volumes:
       - type: volume
@@ -131,7 +131,7 @@ services:
       - proxy
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
       - TZ=America/Toronto
     volumes:
       - type: volume
@@ -193,7 +193,7 @@ services:
       - proxy
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
       - TZ=America/Toronto
     volumes:
       - type: volume
@@ -213,7 +213,7 @@ services:
     image: ghcr.io/apetresc/calibre-web:0.6.20
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
       - TZ=America/Toronto
       - DOCKER_MODS=ghcr.io/linuxserver/mods:universal-calibre
     deploy:
