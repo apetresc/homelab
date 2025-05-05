@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   jackett:
-    image: linuxserver/jackett:latest
+    image: lscr.io/linuxserver/jackett:latest
     deploy:
       labels:
         shepherd.enable: "true"
@@ -30,7 +30,7 @@ services:
         target: /config
 
   tautulli:
-    image: linuxserver/tautulli:latest
+    image: lscr.io/linuxserver/tautulli:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -54,7 +54,7 @@ services:
       - tautulli_config:/config
 
   ombi:
-    image: linuxserver/ombi:latest
+    image: lscr.io/linuxserver/ombi:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -78,7 +78,7 @@ services:
       - ombi_config:/config
 
   sonarr:
-    image: linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -113,7 +113,7 @@ services:
         target: /downloads
 
   radarr:
-    image: linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -144,8 +144,6 @@ services:
         source: unsorted
         target: /downloads
 
-  lidarr:
-    image: linuxserver/lidarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -176,6 +174,8 @@ services:
 
   bazarr:
     image: linuxserver/bazarr
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -245,7 +245,7 @@ services:
         target: /config/client_secrets.json
 
   mylar:
-    image: linuxserver/mylar3:latest
+    image: lscr.io/linuxserver/mylar3:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -343,7 +343,7 @@ services:
         target: /data/Anime
 
   plex:
-    image: linuxserver/plex:latest
+    image: lscr.io/linuxserver/plex:latest
     deploy:
       placement:
         constraints:
