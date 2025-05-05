@@ -430,6 +430,36 @@ services:
         source: anime
         target: /data/Anime
 
+  slsk:
+    image: slskd/slskd:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.slsk.rule: "Host(`slsk.apetre.sc`)"
+        traefik.http.routers.slsk.tls.certResolver: "r53resolver"
+        traefik.http.routers.slsk.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.slsk.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.slsk.loadbalancer.server.port: 5030
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - proxy
+    user: 1000:1000
+    environment:
+      - SLSKD_REMOTE_CONFIGURATION=true
+    ports:
+      - target: 50300
+        published: 50300
+        protocol: tcp
+        mode: host
+    volumes:
+      - slskd_data:/app
+      - music:/data/Music:ro
+      - books:/data/Books:ro
+      - unsorted:/downloads
+
   plex:
     image: lscr.io/linuxserver/plex:latest
     deploy:
@@ -559,11 +589,13 @@ volumes:
     driver: zfs
   calibre_config:
     driver: zfs
-  airdcpp_data:
   audiobookshelf_config:
     driver: zfs
   audiobookshelf_metadata:
     driver: zfs
+  airdcpp_data:
+    driver: zfs
+  slskd_data:
     driver: zfs
   plex_data:
   qbittorrent_config:
