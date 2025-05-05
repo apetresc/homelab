@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   freshrss:
-    image: lscr.io/linuxserver/freshrss:latest
+    image: lscr.io/linuxserver/freshrss:1.26.2
     deploy:
       labels:
         traefik.enable: "true"
@@ -27,7 +27,7 @@ services:
       - default
       - proxy
   db:
-    image: docker.io/postgres:12-alpine
+    image: docker.io/postgres:17-alpine
     deploy:
       placement:
         constraints:
