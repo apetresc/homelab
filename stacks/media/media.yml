@@ -144,6 +144,40 @@ services:
         source: unsorted
         target: /downloads
 
+  radarr4k:
+    image: lscr.io/linuxserver/radarr:latest
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.radarr4k.rule: "Host(`radarr4k.apetre.sc`)"
+        traefik.http.routers.radarr4k.tls.certResolver: "r53resolver"
+        traefik.http.routers.radarr4k.tls.domains[0].main: "apetre.sc"
+        traefik.http.routers.radarr4k.tls.domains[0].sans: "*.apetre.sc"
+        traefik.http.services.radarr4k.loadbalancer.server.port: 7878
+        traefik.docker.network: proxy
+      placement:
+        constraints:
+          - node.labels.zpool == tank2
+    networks:
+      - default
+      - proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - type: volume
+        source: radarr4k_config
+        target: /config
+      - type: volume
+        source: movies4k
+        target: /movies
+      - type: volume
+        source: unsorted
+        target: /downloads
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
     deploy:
       labels:
         traefik.enable: "true"
@@ -171,43 +205,6 @@ services:
         source: music
         target: /music
         read_only: false
-
-  bazarr:
-    image: linuxserver/bazarr
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    deploy:
-      labels:
-        traefik.enable: "true"
-        traefik.http.routers.bazarr.rule: "Host(`bazarr.apetre.sc`)"
-        traefik.http.routers.bazarr.tls.certResolver: "r53resolver"
-        traefik.http.routers.bazarr.tls.domains[0].main: "apetre.sc"
-        traefik.http.routers.bazarr.tls.domains[0].sans: "*.apetre.sc"
-        traefik.http.services.bazarr.loadbalancer.server.port: 6767
-        traefik.docker.network: proxy
-      placement:
-        constraints:
-          - node.labels.zpool == tank2
-    networks:
-      - default
-      - proxy
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Toronto
-    volumes:
-      - type: volume
-        source: bazarr_config
-        target: /config
-      - type: volume
-        source: movies
-        target: /movies
-      - type: volume
-        source: shows
-        target: /shows
-      - type: volume
-        source: anime
-        target: /anime
 
   calibre-web:
     image: ghcr.io/apetresc/calibre-web:0.6.20
@@ -359,6 +356,7 @@ services:
     volumes:
       - plex_data:/config
       - /tank1/media/video/Movies:/movies
+      - /tank1/media/video/Movies [4K]:/movies4k
       - /tank1/media/video/Shows:/shows
       - /tank1/media/video/Anime:/anime
       - /tank1/media/audio/Music:/music
@@ -455,6 +453,8 @@ volumes:
     driver: zfs
   radarr_config:
     driver: zfs
+  radarr4k_config:
+    driver: zfs
   sonarr_config:
     driver: zfs
   bazarr_config:
@@ -484,6 +484,12 @@ volumes:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
       device: ":/srv/nfs/tank1/media/video/Movies"
+  movies4k:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/video/Movies [4K]"
   shows:
     driver: local
     driver_opts:
