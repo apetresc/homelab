@@ -207,12 +207,12 @@ services:
         read_only: false
 
   calibre-web:
-    image: ghcr.io/apetresc/calibre-web:0.6.20
+    image: ghcr.io/apetresc/calibre-web:0.6.24
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Toronto
-      - DOCKER_MODS=ghcr.io/linuxserver/mods:universal-calibre
+      - DOCKER_MODS=linuxserver/mods:universal-calibre
     deploy:
       labels:
         traefik.enable: "true"
