@@ -530,7 +530,7 @@ services:
         mode: host
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:5.0.5
+    image: lscr.io/linuxserver/qbittorrent:5.1.0
     deploy:
       labels:
         traefik.enable: "true"
