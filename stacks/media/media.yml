@@ -296,6 +296,9 @@ services:
       - type: volume
         source: comics
         target: /data
+      - type: volume
+        source: magazines
+        target: /data/Magazines
     user: 1000:1000
     environment:
       - TZ=America/Toronto
@@ -662,6 +665,12 @@ volumes:
       type: nfs
       o: addr=192.168.1.130,soft,nolock
       device: ":/srv/nfs/tank1/media/text/Comics/Komga/Comics"
+  magazines:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.130,soft,nolock
+      device: ":/srv/nfs/tank1/media/text/Magazines"
   media:
     driver: local
     driver_opts:
